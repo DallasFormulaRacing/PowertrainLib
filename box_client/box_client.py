@@ -7,8 +7,8 @@ class Box_Client:
 
     def __init__(self, grant_type: str, client_id: str, client_seceret:str):
         self.grant_type = grant_type
-        self.client_id = "vey8wix8oegezspv1gn2bs2z296x7yng"
-        self.client_seceret = "IwSv2bvp25CGFzaDAqRZv9AZ0jCk5f0g"
+        self.client_id = client_id
+        self.client_seceret = client_seceret
 
     def retrieve_access_token(self) -> str:
 
