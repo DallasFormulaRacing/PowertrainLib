@@ -18,14 +18,14 @@ class Box_Client:
             'client_secret': self.client_seceret
         }
 
-        response = requests.post(TOKEN_URL, data=body)
+        try:
+            response = requests.post(TOKEN_URL, data=body)
 
-        if response.status_code == 200:
             access_token = response.json().get("access_token")
             print(f"Token Recieved: {access_token}")
             return access_token
         
-        print(f"Error:{response.status_code}")
+        except requests.exceptions.RequestException as error:
+            return {'status': 'failure', 'error': str(error)}
         
-        return None
 
