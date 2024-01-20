@@ -9,6 +9,6 @@ def box_client():
         grant_type="client_credentials",
         client_id=os.getenv("CLIENT_ID"),
         client_secret=os.getenv("CLIENT_SECRET"),
-        file_path="/Users/noeljohnson/Documents/GitHub/PowertrainLib/tests/emptyfile.txt",
-        folder_id="144833862514"
+        file_path="/Users/noeljohnson/Documents/file.txt",
+        folder_id="217403389478"
     )

@@ -34,7 +34,6 @@ class Box_Client:
             return {'status': 'failure', 'error': str(error)}
 
     def send_file(self) -> bool:
-
         access_token = self.retrieve_access_token()
         file_name = os.path.basename(self.file_path)
 
@@ -42,19 +41,26 @@ class Box_Client:
             "Authorization": f"Bearer {access_token}",
         }
 
-        files = {
-            'file': (file_name, open(self.file_path, 'rb')),
-            'attributes': (None, json.dumps({'parent': {'id': self.folder_id}})),
-        }
+        with open(self.file_path, 'rb') as file_to_upload:
 
-        try:
-            response = requests.post(UPLOAD_URL, headers=headers, files=files)
+            files = {
+                'file': (file_name, file_to_upload),
+                'attributes': (None, json.dumps({'parent': {'id': '217403389478'}})),
+            }
 
-            if response.status_code == 201:
-                return True
+            # print(json.dumps({'parent': {'id': '217403389478'}}))
 
-        except requests.exceptions.RequestException as error:
-            return {'status': 'failure', 'error': str(error)}
+            try:
+                response = requests.post(
+                    UPLOAD_URL, headers=headers, files=files)
 
-        finally:
-            os.remove(self.file_path)
+                if response.status_code == 201:
+                    return True
+                else:
+                    print(f"Error: {response.status_code}")
+                    print(response.json())
+                    return False
+
+            except requests.exceptions.RequestException as error:
+                print(f'Request Exception: {error}')
+                return False
