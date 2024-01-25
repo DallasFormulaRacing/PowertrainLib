@@ -17,7 +17,7 @@ config = json.load(
 key_id = config['boxAppSettings']['appAuth']['publicKeyID']
 
 
-class Box_Client:
+class Client:
 
     def __init__(self, client_id: str, client_secret: str, file_path: str, folder_id: int):
         self.client_id = config['boxAppSettings']['clientID']

@@ -2,12 +2,14 @@ import traceback
 
 import requests
 
-class discord_webhook:
+
+class Client:
 
     def __init__(self, webhook_url: str):
         self.webhook_url = webhook_url
 
-    def post_message(self, message: str):
+    # make this return a boolean
+    def post_message(self, message: str) -> bool:
         data = {
             "content": message
         }
