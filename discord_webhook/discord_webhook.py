@@ -1,3 +1,5 @@
+import traceback
+
 import requests
 
 class discord_webhook:
@@ -14,6 +16,6 @@ class discord_webhook:
         try:
             result.raise_for_status()
         except requests.exceptions.HTTPError as err:
-            print(err)
+            traceback.print_exc()
         else:
             print("Status code: {}".format(result.status_code))
