@@ -4,3 +4,4 @@ pymongo
 requests
 pytest
 dash
+cryptography

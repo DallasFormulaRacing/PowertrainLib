@@ -3,12 +3,32 @@ from pymongo.server_api import ServerApi
 import os
 
 
-uri = f"mongodb+srv://noel:${os.getenv('MONGO_PASSWORD')}@cluster0.gw7z3sn.mongodb.net/?retryWrites=true&w=majority"
-# Create a new client and connect to the server
-client = MongoClient(uri, server_api=ServerApi('1'))
-# Send a ping to confirm a successful connection
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)
+class Client:
+
+    client = MongoClient(os.getenv("MONGO_URI"), server_api=ServerApi('1'))
+
+    def __init__(self, connection_string: str):
+        self.connection_string = connection_string
+        self.clientclient = MongoClient(
+            connection_string, server_api=ServerApi('1'))
+
+    def establish_connection(self):
+        try:
+            self.client.admin.command('ping')
+            print("Pinged your deployment. You successfully connected to MongoDB!")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def close_connection(self):
+        self.client.close()
+        print("MongoDB connection closed.")
+
+    def insert_document(self, db_name: str, collection_name: str, data: dict):
+        try:
+            db = self.client[db_name]
+            collection = db[collection_name]
+
+            inserted_ids = collection.insert_many(data).inserted_ids
+            print(f"Documents inserted, IDs: {inserted_ids}")
+        except Exception as e:
+            print(f"An error occurred: {e}")
