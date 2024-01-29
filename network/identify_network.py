@@ -1,6 +1,5 @@
 import platform
 import subprocess
-import requests
 
 
 class Client:

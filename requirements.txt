@@ -1,0 +1,6 @@
+plotly
+python-can
+pymongo
+requests
+pytest
+dash
