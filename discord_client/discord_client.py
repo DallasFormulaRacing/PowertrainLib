@@ -18,6 +18,6 @@ class Client:
         try:
             result.raise_for_status()
         except requests.exceptions.HTTPError as err:
-            traceback.print_exc()
+            traceback.print_exc(err)
         else:
             print("Status code: {}".format(result.status_code))

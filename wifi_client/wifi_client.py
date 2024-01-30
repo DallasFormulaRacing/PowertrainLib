@@ -1,6 +1,7 @@
 import wifi
 from wifi import Cell
 
+
 class Client:
     def __init__(self, device_id: str):
         self.device_id = device_id
@@ -18,3 +19,12 @@ class Client:
 
         print(f"Could not connect to wifi: {ssid}")
         return False
+
+
+def main():
+    client = Client('wlan0')
+    client.connect('ssid', 'password')
+
+
+if __name__ == '__main__':
+    main()
