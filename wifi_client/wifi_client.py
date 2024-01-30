@@ -15,10 +15,12 @@ class Client:
         return Cell.all(self.device_id)
 
     def connect(self, ssid: str, password: str) -> bool:
-        networks = Cell.all(self.device_id)
+
+        networks = self.get_wifi_networks()
+
         for network in networks:
             if network.ssid == ssid:
-                scheme = wifi.Scheme.for_cell(self.device_id, network.ssid, network, password)
+                scheme = wifi.Scheme.for_cell(self.device_id, network.ssid, network, self.password)
                 scheme.save()
                 scheme.activate()
 
