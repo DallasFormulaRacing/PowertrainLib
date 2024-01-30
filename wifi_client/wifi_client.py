@@ -1,5 +1,6 @@
 import wifi
 from wifi import Cell, Scheme
+import traceback
 
 # home network will be the network you want to connect to
 # password is the password for that network
@@ -12,7 +13,11 @@ class Client:
         self.password = password
 
     def get_wifi_networks(self) -> list:
-        return Cell.all(self.device_id)
+        try:
+            return Cell.all(self.device_id)
+        except:
+            traceback.print_exc()
+            return []
 
     def connect(self) -> bool:
 
@@ -28,10 +33,7 @@ class Client:
                     print(f"Connected to wifi: {network.ssid}")
                     return True
         except:
-            print("There was an error when connecting to the wifi network")
-            return False
-        else:
-            print(f"Could not connect to wifi: {self.home_network}")
+            traceback.print_exc()
             return False
 
 
