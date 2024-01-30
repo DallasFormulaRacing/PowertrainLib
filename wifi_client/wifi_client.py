@@ -1,5 +1,5 @@
 import wifi
-from wifi import Cell
+from wifi import Cell, Scheme
 
 # home network will be the network you want to connect to
 # password is the password for that network
@@ -14,12 +14,12 @@ class Client:
     def get_wifi_networks(self) -> list:
         return Cell.all(self.device_id)
 
-    def connect(self, ssid: str, password: str) -> bool:
+    def connect(self) -> bool:
 
         networks = self.get_wifi_networks()
 
         for network in networks:
-            if network.ssid == ssid:
+            if network.ssid == self.home_network:
                 scheme = wifi.Scheme.for_cell(self.device_id, network.ssid, network, self.password)
                 scheme.save()
                 scheme.activate()
@@ -27,13 +27,13 @@ class Client:
                 print(f"Connected to wifi: {network.ssid}")
                 return True
 
-        print(f"Could not connect to wifi: {ssid}")
+        print(f"Could not connect to wifi: {self.home_network}")
         return False
 
 
 def main():
-    client = Client('wlan0')
-    client.connect('ssid', 'password')
+    client = Client('wlan0', 'home_network_ssid', 'home_network_password')
+    client.connect()
 
 
 if __name__ == '__main__':
