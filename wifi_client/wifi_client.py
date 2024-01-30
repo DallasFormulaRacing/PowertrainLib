@@ -1,10 +1,18 @@
 import wifi
 from wifi import Cell
 
+# home network will be the network you want to connect to
+# password is the password for that network
+
 
 class Client:
-    def __init__(self, device_id: str):
+    def __init__(self, device_id: str, home_network: str, password: str):
         self.device_id = device_id
+        self.home_network = home_network
+        self.password = password
+
+    def get_wifi_networks(self) -> list:
+        return Cell.all(self.device_id)
 
     def connect(self, ssid: str, password: str) -> bool:
         networks = Cell.all(self.device_id)
