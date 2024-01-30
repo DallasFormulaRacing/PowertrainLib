@@ -16,19 +16,23 @@ class Client:
 
     def connect(self) -> bool:
 
-        networks = self.get_wifi_networks()
+        try:
+            networks = self.get_wifi_networks()
 
-        for network in networks:
-            if network.ssid == self.home_network:
-                scheme = wifi.Scheme.for_cell(self.device_id, network.ssid, network, self.password)
-                scheme.save()
-                scheme.activate()
+            for network in networks:
+                if network.ssid == self.home_network:
+                    scheme = wifi.Scheme.for_cell(self.device_id, network.ssid, network, self.password)
+                    scheme.save()
+                    scheme.activate()
 
-                print(f"Connected to wifi: {network.ssid}")
-                return True
-
-        print(f"Could not connect to wifi: {self.home_network}")
-        return False
+                    print(f"Connected to wifi: {network.ssid}")
+                    return True
+        except:
+            print("There was an error when connecting to the wifi network")
+            return False
+        else:
+            print(f"Could not connect to wifi: {self.home_network}")
+            return False
 
 
 def main():
