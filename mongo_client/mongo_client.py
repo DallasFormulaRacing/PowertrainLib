@@ -1,15 +1,18 @@
 import traceback
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+from dotenv import load_dotenv
 import os
 import logging
+
+load_dotenv()
+mongo_uri = os.getenv("uri")
 
 
 class Client:
 
     def __init__(self, db_name: str, collection_name: str):
-        connection_string = os.getenv("MONGO_URI")
-        self.client = MongoClient(connection_string, server_api=ServerApi('1'))
+        self.client = MongoClient(mongo_uri, server_api=ServerApi('1'))
         self.db = self.client[db_name]
         self.collection = self.db[collection_name]
         logging.info("MongoDB has been connection established.")
