@@ -12,7 +12,7 @@ class Handler:
         ecu_df = pd.read_csv("data/ecu_data/ecu_data.csv")
         ecu_dict = ecu_df.to_dict("records")
 
-        mongo_client.insert_documents(ecu_dict)
+        # mongo_client.insert_documents(ecu_dict)
         mongo_client.close_connection()
 
 
