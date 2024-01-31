@@ -19,7 +19,7 @@ Box JWT Token for auth- https://developer.box.com/reference/resources/access-tok
 
 Pymongo Docs- https://pymongo.readthedocs.io/en/stable/
 
-Instantiating the mongoClient:
+Instantiating the mongoClient Wrapper:
 
 ```
 from mongo_client.mongo_client import Client as Mongo_Client
