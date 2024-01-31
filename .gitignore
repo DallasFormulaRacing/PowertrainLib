@@ -24,3 +24,5 @@ build/
 # System or hidden files
 .DS_Store
 Thumbs.db
+
+data/

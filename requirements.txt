@@ -6,3 +6,4 @@ pytest
 dash
 cryptography
 wifi
+jwt
