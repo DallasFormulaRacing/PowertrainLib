@@ -19,6 +19,13 @@ Box JWT Token for auth- https://developer.box.com/reference/resources/access-tok
 
 Pymongo Docs- https://pymongo.readthedocs.io/en/stable/
 
+Instantiating the mongoClient:
+
+```
+from mongo_client.mongo_client import Client as Mongo_Client
+mongo_client = Mongo_Client("db_name, "collection_name")
+```
+
 ### Graphing Client
 
 Plotly- https://plotly.com/python/
