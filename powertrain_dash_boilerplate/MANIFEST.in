@@ -1,0 +1,11 @@
+include powertrain_dash_boilerplate/powertrain_dash_boilerplate.min.js
+include powertrain_dash_boilerplate/powertrain_dash_boilerplate.min.js.map
+include powertrain_dash_boilerplate/async-*.js
+include powertrain_dash_boilerplate/async-*.js.map
+include powertrain_dash_boilerplate/*-shared.js
+include powertrain_dash_boilerplate/*-shared.js.map
+include powertrain_dash_boilerplate/metadata.json
+include powertrain_dash_boilerplate/package-info.json
+include README.md
+include LICENSE
+include package.json
