@@ -1,6 +1,7 @@
 from box_client.box_client import Client as BoxClient
 from discord_client.discord_client import Client as DiscordClient
-from network.identify_network import Client as NetworkClient
+from mongo_client.mongo_client import Client as MongoClient
+from wifi_client.wifi_client import Client as WifiClient
 
 
 # first search for the wifi network and try to identify the correct one
@@ -13,16 +14,37 @@ from network.identify_network import Client as NetworkClient
 class Handler:
 
     def handler():
-        network_client = NetworkClient()
-        discord_client = DiscordClient()
+        wifi_client = WifiClient('device_id', 'home_network', 'password')
+        discord_client = DiscordClient('webhook_url')
         box_client = BoxClient()
+        mongo_client = MongoClient('db_name', 'collection_name')
 
-        if network_client.get_wifi_networks():
+        if 'NETGEAR76' in wifi_client.get_wifi_networks():
 
-            if box_client.send_file():
-                discord_client.post_message("File uploaded to Box")
-            else:
-                discord_client.post_message("Error uploading file to Box")
+            if wifi_client.connect():
+                if mongo_client.check_connection():
+                    if mongo_client.insert_documents(list):
+                        discord_client.post_message("Documents inserted into MongoDB")
+                    else:
+                        discord_client.post_message("Error inserting documents into MongoDB")
+                    mongo_client.close_connection()
+
+                if box_client.send_file():
+                    discord_client.post_message("File uploaded to Box")
+                else:
+                    discord_client.post_message("Error uploading file to Box")
+
+        # network_client = NetworkClient()
+        # discord_client = DiscordClient()
+        # box_client = BoxClient()
+
+        # if network_client.get_wifi_networks():
+
+        #     if box_client.send_file():
+        #         discord_client.post_message("File uploaded to Box")
+        #     else:
+        #         discord_client.post_message("Error uploading file to Box")
+
 
 
 if __name__ == "__main__":
