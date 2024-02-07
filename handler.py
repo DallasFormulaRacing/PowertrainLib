@@ -3,6 +3,8 @@ from discord_client.discord_client import Client as DiscordClient
 from mongo_client.mongo_client import Client as MongoClient
 from wifi_client.wifi_client import Client as WifiClient
 
+import os
+from dotenv import load_dotenv
 
 # first search for the wifi network and try to identify the correct one
 # if the network is found, then upload the files to box and send a message to discord
@@ -14,37 +16,39 @@ from wifi_client.wifi_client import Client as WifiClient
 class Handler:
 
     def handler():
-        wifi_client = WifiClient('device_id', 'home_network', 'password')
-        discord_client = DiscordClient('webhook_url')
+        
+        load_dotenv()
+        WIFI_PASSWORD = os.getenv('WIFI_PASSWORD')
+        WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK')
+        
+        wifi_client = WifiClient('device_id', 'home_network', WIFI_PASSWORD)
+        discord_client = DiscordClient(WEBHOOK_URL)
         box_client = BoxClient()
-        mongo_client = MongoClient('db_name', 'collection_name')
+        mongo_client = MongoClient('cluster0', 'dfr_sensor_data')
+        
+        wifi_networks = wifi_client.get_wifi_networks()
+        if 'NETGEAR76' not in wifi_networks:
+            return
+        
+        if not wifi_client.connect():
+            return
+        
+        if not mongo_client.check_connection():
+            discord_client.post_message("Error connecting to MongoDB")
+            return
+        
+        if not mongo_client.insert_documents():
+            discord_client.post_message("Error inserting documents into MongoDB")
+            return
+        
+        discord_client.post_message("Documents inserted into MongoDB")
+        mongo_client.close_connection()
 
-        if 'NETGEAR76' in wifi_client.get_wifi_networks():
-
-            if wifi_client.connect():
-                if mongo_client.check_connection():
-                    if mongo_client.insert_documents(list):
-                        discord_client.post_message("Documents inserted into MongoDB")
-                    else:
-                        discord_client.post_message("Error inserting documents into MongoDB")
-                    mongo_client.close_connection()
-
-                if box_client.send_file():
-                    discord_client.post_message("File uploaded to Box")
-                else:
-                    discord_client.post_message("Error uploading file to Box")
-
-        # network_client = NetworkClient()
-        # discord_client = DiscordClient()
-        # box_client = BoxClient()
-
-        # if network_client.get_wifi_networks():
-
-        #     if box_client.send_file():
-        #         discord_client.post_message("File uploaded to Box")
-        #     else:
-        #         discord_client.post_message("Error uploading file to Box")
-
+        if not box_client.send_file():
+            discord_client.post_message("Error uploading file to Box")
+            return
+        
+        discord_client.post_message("File uploaded to Box")
 
 
 if __name__ == "__main__":
