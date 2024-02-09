@@ -1,3 +1,6 @@
+# don't upload data files *please*
+*.csv
+
 # Compiled Python files
 __pycache__/
 *.pyc
