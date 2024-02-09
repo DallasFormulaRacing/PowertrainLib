@@ -15,7 +15,8 @@
       |      +-- aero.py
       |      +-- steeringsuspension.py
       |      +-- powertrain/
-                      |      +-- components.py
+                      |      +-- visualizations/
+                                    |     +-- rpm_over_time.py
                       |      +-- layout.py
 +-- Utils/
       |      +-- common functions

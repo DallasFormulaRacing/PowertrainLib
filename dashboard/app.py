@@ -31,9 +31,9 @@ dbt.load_figure_template(["cyborg"])
 dbc_css = "https://cdn.jsdelivr.net/gh/AnnMarieW/dash-bootstrap-templates/dbc.min.css"
 
 # making custom plotly template with custom colors on top of the slate design template
-plt_io.templates["custom_dark"] = plt_io.templates["cyborg"]
+# plt_io.templates["custom_dark"] = plt_io.templates["cyborg"]
 
-plt_io.templates.default = "cyborg"
+plt_io.templates.default = "plotly_dark"
 
 """CREATE APPLICATION"""
 app = dash.Dash(

@@ -15,7 +15,7 @@ navbar = dbc.Nav(
             ],
             vertical=False,
             pills=False,
-            className="bg-transparent bg-opacity-50 bg-blur-xl fixed justify-content-center gap-4 w-full p-2 z-25",
+            className="bg-transparent bg-opacity-50 bg-blur-xl justify-content-center gap-4 w-full p-2 z-25",
         )
 
 layout = dbc.Container(
