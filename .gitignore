@@ -1,2 +1,6 @@
 # don't upload data files *please*
 *.csv
+
+__pycache__
+
+venv
