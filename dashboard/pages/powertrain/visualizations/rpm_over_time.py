@@ -28,8 +28,6 @@ def rpm_over_time_graph(_time_range):
         df,
         x="Time (sec)",
         y="RPM",
-        title="RPM Over Time",
         labels={"value": "RPM", "timestamp": "Time"}
     )
-
     return fig
