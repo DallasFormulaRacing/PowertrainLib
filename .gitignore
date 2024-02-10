@@ -1,3 +1,6 @@
+# No data files
+*.csv
+
 # Compiled Python files
 __pycache__/
 *.pyc
@@ -26,3 +29,5 @@ build/
 Thumbs.db
 
 data/
+.ecu_data
+512311_xk3jq6ao_config.json

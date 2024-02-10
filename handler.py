@@ -1,28 +1,46 @@
 from box_client.box_client import Client as BoxClient
 from discord_client.discord_client import Client as DiscordClient
-from network.identify_network import Client as NetworkClient
+from mongo_client.mongo_client import Client as MongoClient
+from wifi_client.wifi_client import Client as WifiClient
 
-
-# first search for the wifi network and try to identify the correct one
-# if the network is found, then upload the files to box and send a message to discord
-# this is the genereal idea of how to, go back into discord_client.py and network_client.py and box_client.py
-# and make the necessary changes such as making the functions return a boolean or the correct data type
-# then utilize the handler.py file to call the functions and make the necessary changes to the handler.py file
+import os
+from dotenv import load_dotenv
 
 
 class Handler:
 
     def handler():
-        network_client = NetworkClient()
-        discord_client = DiscordClient()
+
+        load_dotenv()
+        WIFI_PASSWORD = os.getenv('WIFI_PASSWORD')
+        WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK')
+        DEVICE_ID = os.getenv('DEVICE_ID')
+        NETWORK_NAME = os.getenv('NETWORK_NAME')
+
+        wifi_client = WifiClient(DEVICE_ID, NETWORK_NAME, WIFI_PASSWORD)
+        discord_client = DiscordClient(WEBHOOK_URL)
         box_client = BoxClient()
+        mongo_client = MongoClient('cluster0', 'dfr_sensor_data')
 
-        if network_client.get_wifi_networks():
+        wifi_networks = wifi_client.get_wifi_networks()
 
-            if box_client.send_file():
+        if NETWORK_NAME in wifi_networks:
+
+            try:
+                wifi_client.connect()
+                box_client.send_files()
                 discord_client.post_message("File uploaded to Box")
-            else:
-                discord_client.post_message("Error uploading file to Box")
+                mongo_client.check_connection()
+                mongo_client.insert_documents()
+                mongo_client.close_connection()
+
+                discord_client.post_message("Documents inserted into MongoDB")
+            except Exception as e:
+                print.traceback(e)
+                discord_client.post_message(f"An error occurred: {e}")
+                return
+
+        return None
 
 
 if __name__ == "__main__":
