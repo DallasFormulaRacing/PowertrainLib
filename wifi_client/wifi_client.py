@@ -1,6 +1,7 @@
 import wifi
 from wifi import Cell, Scheme
 import traceback
+import os
 
 # home network will be the network you want to connect to
 # password is the password for that network
@@ -14,32 +15,48 @@ class Client:
 
     def get_wifi_networks(self) -> list:
         try:
-            return Cell.all(self.device_id)
+            return Cell.all("d8:3a:dd:19:9f:a4")
         except:
             traceback.print_exc()
             return []
 
     def connect(self) -> bool:
 
-        try:
-            networks = self.get_wifi_networks()
+        connected = False
 
-            for network in networks:
-                if network.ssid == self.home_network:
-                    scheme = wifi.Scheme.for_cell(self.device_id, network.ssid, network, self.password)
+        networks = self.get_wifi_networks()
+
+        for network in networks:
+            print(network)
+
+        for network in networks:
+            print(network.ssid)
+            if network.ssid == self.home_network:
+                print("Found home network")
+                scheme = wifi.Scheme.for_cell(self.device_id, network.ssid, network, self.password)
+
+                try:
                     scheme.save()
                     scheme.activate()
 
                     print(f"Connected to wifi: {network.ssid}")
-                    return True
-        except:
-            traceback.print_exc()
-            return False
+                    connected = True
+
+                except wifi.exceptions.ConnectionError as err:
+                    traceback.print_exc(err)
+                    connected = False
+
+        return connected
 
 
 def main():
-    client = Client('wlan0', 'home_network_ssid', 'home_network_password')
-    client.connect()
+    device_id = os.getenv("DEVICE_ID")
+    home_network = os.getenv("NETWORK_SSID")
+    password = os.getenv("NETWORK_PASSWORD")
+    client = Client(device_id, home_network, password)
+
+    # client.get_wifi_networks()
+    print(client.connect())
 
 
 if __name__ == '__main__':
