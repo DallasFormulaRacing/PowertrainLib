@@ -12,11 +12,25 @@ PAGE = "powertrain"
 VIZ_ID = "rpm-over-time"
 
 gc_rpm_over_time = dcc.Loading(
-    dcc.Graph(id=f"{PAGE}-{VIZ_ID}"),
+    [
+        dbc.CardBody(
+            [
+                html.H3(
+                    "RPM vs Time (sec)",
+                    className="card-title",
+                    style={"textAlign": "center"},
+                ),
+                dcc.Loading(
+                    dcc.Graph(id=f"{PAGE}-{VIZ_ID}"),
+                ),
+            ]
+        ),
+    ],
 )
 
-
 # callback for commits over time graph
+
+
 @callback(
     Output(f"{PAGE}-{VIZ_ID}", "figure"),
     Input("time-range", "data")
