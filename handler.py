@@ -6,12 +6,6 @@ from wifi_client.wifi_client import Client as WifiClient
 import os
 from dotenv import load_dotenv
 
-# first search for the wifi network and try to identify the correct one
-# if the network is found, then upload the files to box and send a message to discord
-# this is the genereal idea of how to, go back into discord_client.py and network_client.py and box_client.py
-# and make the necessary changes such as making the functions return a boolean or the correct data type
-# then utilize the handler.py file to call the functions and make the necessary changes to the handler.py file
-
 
 class Handler:
 
@@ -27,28 +21,24 @@ class Handler:
         mongo_client = MongoClient('cluster0', 'dfr_sensor_data')
 
         wifi_networks = wifi_client.get_wifi_networks()
-        if 'NETGEAR76' not in wifi_networks:
-            return
 
-        if not wifi_client.connect():
-            return
+        if 'NETGEAR76' in wifi_networks:
 
-        if not mongo_client.check_connection():
-            discord_client.post_message("Error connecting to MongoDB")
-            return
+            try:
+                wifi_client.connect()
+                box_client.send_files()
+                discord_client.post_message("File uploaded to Box")
+                mongo_client.check_connection()
+                mongo_client.insert_documents()
+                mongo_client.close_connection()
 
-        if not mongo_client.insert_documents():
-            discord_client.post_message("Error inserting documents into MongoDB")
-            return
+                discord_client.post_message("Documents inserted into MongoDB")
+            except Exception as e:
+                print.traceback(e)
+                discord_client.post_message(f"An error occurred: {e}")
+                return
 
-        discord_client.post_message("Documents inserted into MongoDB")
-        mongo_client.close_connection()
-
-        if not box_client.send_file():
-            discord_client.post_message("Error uploading file to Box")
-            return
-
-        discord_client.post_message("File uploaded to Box")
+        return None
 
 
 if __name__ == "__main__":

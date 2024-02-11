@@ -12,7 +12,7 @@ UPLOAD_URL = "https://upload.box.com/api/2.0/files/content"
 USER_INFO_URL = "https://api.box.com/2.0/users/me"
 
 config = json.load(
-    open('/Users/noeljohnson/Desktop/512311_xk3jq6ao_config.json'))
+    open('512311_xk3jq6ao_config.json'))
 
 key_id = config['boxAppSettings']['appAuth']['publicKeyID']
 
@@ -77,7 +77,7 @@ class Client:
             print(response.text)
             return None
 
-    def send_file(self) -> bool:
+    def send_files(self) -> bool:
         access_token = self.retrieve_access_token()
         file_name = os.path.basename(self.file_path)
 
