@@ -17,4 +17,7 @@ def test_mongo_connection(mongo_client):
     request = mongo_client.establish_connection()
     assert request is None
 
-# create a test to insert a document into a collection (vasu)
+
+def test_mongo_pull(mongo_client):
+    request = mongo_client.pull_documents({})
+    assert isinstance(request, list)

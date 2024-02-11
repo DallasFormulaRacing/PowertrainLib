@@ -3,6 +3,9 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import os
 import logging
+import pandas as pd
+
+logging.basicConfig(level=logging.INFO)
 
 
 class Client:
@@ -58,3 +61,23 @@ class Client:
             logging.error(f"An error occurred while trying to insert documents: {e}")
             traceback.print_exc()
             return False
+
+    def pull_documents(self, query: dict) -> pd.DataFrame:
+
+        try:
+            if isinstance(query, dict):
+                documents = list(self.collection.find(query))
+                logging.info(f"Documents pulled: {documents}")
+                documents_df = pd.DataFrame(documents)
+
+                # print(f"Documents pulled: {documents}")
+
+                return documents_df
+
+            raise ValueError("Query should be a dictionary")
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            logging.error(f"An error occurred while trying to pull documents: {e}")
+            traceback.print_exc()
+            return None

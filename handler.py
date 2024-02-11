@@ -16,38 +16,38 @@ from dotenv import load_dotenv
 class Handler:
 
     def handler():
-        
+
         load_dotenv()
         WIFI_PASSWORD = os.getenv('WIFI_PASSWORD')
         WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK')
-        
+
         wifi_client = WifiClient('device_id', 'home_network', WIFI_PASSWORD)
         discord_client = DiscordClient(WEBHOOK_URL)
         box_client = BoxClient()
         mongo_client = MongoClient('cluster0', 'dfr_sensor_data')
-        
+
         wifi_networks = wifi_client.get_wifi_networks()
         if 'NETGEAR76' not in wifi_networks:
             return
-        
+
         if not wifi_client.connect():
             return
-        
+
         if not mongo_client.check_connection():
             discord_client.post_message("Error connecting to MongoDB")
             return
-        
+
         if not mongo_client.insert_documents():
             discord_client.post_message("Error inserting documents into MongoDB")
             return
-        
+
         discord_client.post_message("Documents inserted into MongoDB")
         mongo_client.close_connection()
 
         if not box_client.send_file():
             discord_client.post_message("Error uploading file to Box")
             return
-        
+
         discord_client.post_message("File uploaded to Box")
 
 

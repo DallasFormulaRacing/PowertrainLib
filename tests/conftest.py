@@ -19,5 +19,6 @@ def box_client():
 @pytest.fixture
 def mongo_client():
     return Mongo_Client(
-        connection_string=uri
+        db_name="cluster0",
+        collection_name="dfr_sensor_data"
     )
