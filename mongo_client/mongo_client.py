@@ -71,6 +71,7 @@ class Client:
                 documents_df = pd.DataFrame(documents)
 
                 # print(f"Documents pulled: {documents}")
+                documents_df.to_csv('ecu_data_mongo.csv', index=False)
 
                 return documents_df
 
