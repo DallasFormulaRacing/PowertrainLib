@@ -16,7 +16,11 @@ canMessages = {
     218101320: ['Analog Input #5', 'Analog Input #7'],
     218101576: ['RPM Rate', 'TPS Rate', 'MAP Rate', 'MAF Load Rate'],
     218101832: ['Lambda #1 Measured', 'Lambda #2 Measured', 'Target Lambda'],
-    218102088: ['PWM Duty Cycle #1', 'PWM Duty Cycle #2', 'PWM Duty Cycle #2', 'PWM Duty Cycle #3', 'PWM Duty Cycle #4', 'PWM Duty Cycle #5', 'PWM Duty Cycle #6', 'PWM Duty Cycle #7', 'PWM Duty Cycle #8'],
+    218102088: [
+        'PWM Duty Cycle #1', 'PWM Duty Cycle #2', 'PWM Duty Cycle #2',
+        'PWM Duty Cycle #3', 'PWM Duty Cycle #4', 'PWM Duty Cycle #5',
+        'PWM Duty Cycle #6', 'PWM Duty Cycle #7', 'PWM Duty Cycle #8'
+    ],
     218102344: ['Percent Slip', 'Driven Wheel Rate of Change', 'Desired Value'],
     218102600: ['Driven AVG Wheel Speed', 'Non-Driven AVG Wheel Speed', 'Ignition Compensation', 'Ignitiion Cut Percentage'],
     218102856: ['Driven Wheel Speed #1', 'Driven Wheel Speed #2', 'Non-Driven Wheel Speed #1', 'Non-Driven Wheel Speed #2'],
@@ -24,36 +28,39 @@ canMessages = {
     218103368: ['Fuel Comp-Barometer', 'Fuel Comp-MAP'],
     # 218099784: ['Ignition Comp-Air Temp', 'Ignition Comp-Coolant Temp', 'Ignition Comp-Barometer', 'Ignition Comp-MAP'],
 }
+
+
 class pressure_type(Enum):
     """The pressure unit type."""
     KPA = 0
     PSI = 1
-    
+
+
 class MessageData:
     _DESERIALIZERS = []
-    
+
     def __init__(self, message: Message):
         self.message = message
         self.data = message.data
-        
+
     @property
     def deserializers(self):
         """List of deserializers for each message ID."""
         return type(self)._DESERIALIZERS
-    
+
     @deserializers.setter
     def set_deserializers(self, deserializers):
         type(self)._DESERIALIZERS = deserializers
-    
+
     def get_deserializer(self, name: str):
         """Get the deserializer for the given name."""
-        
+
         for deserializer in self.deserializers:
             if deserializer['name'] == name:
                 return deserializer
         print("Can't find deserializer", name)
         raise ValueError(f"Deserializer for {name} not found")
-        
+
     @staticmethod
     def deserializer(
         can_id: hex,
@@ -79,40 +86,40 @@ class MessageData:
             resolution_per_bit (float): The level of precision of the data
             data_range (Tuple[int; 2]): The upper and lower bounds of the data
         """
-        
+
         # function takes in a message object and returns the data
         def decorator(func):
-            
+
             annotations = func.__annotations__
-            
+
             if "return" not in annotations:
                 raise ValueError("Deserializers must type hint to return a value")
 
             for annotation in annotations:
                 if annotation not in ["message", "data", "return"]:
                     raise ValueError(f"Deserializers cannot type hint to {annotation}")
-                
+
             dtype = annotations["return"]
-            
+
             @wraps(func)
             def wrapper(messsage: MessageData):
-                
+
                 # check if function accepts a message object
                 args = []
                 kwargs = {}
                 if "message" in annotations:
                     kwargs["message"] = messsage
-                
+
                 # check if function accepts a data object
                 if "data" in annotations:
                     kwargs["data"] = messsage.data[obj['start_position'] - 1: obj['start_position'] + obj['length'] - 1]
-                
+
                 data = func(*args, **kwargs)
-                
+
                 # checking dtype
                 if not isinstance(data, dtype):
                     raise TypeError(f"Deserializer {func.__name__} must return {dtype.__name__}")
-                
+
                 # checking if it matches the range
                 if isinstance(data, (int, float)):
                     if not obj['data_range'][0] <= data <= obj['data_range'][1]:
@@ -133,12 +140,11 @@ class MessageData:
                 func=wrapper
             )
             print("adding object: ", obj)
-            MessageData._DESERIALIZERS.append(obj) # pylint: disable=protected-access
+            MessageData._DESERIALIZERS.append(obj)  # pylint: disable=protected-access
             return wrapper
-        
 
         return decorator
-    
+
     def to_dict(self) -> dict:
         """Create a dictionary of all data points sent in the message data
 
@@ -153,7 +159,7 @@ class MessageData:
         except KeyError:
             raise ValueError(f"Message ID {self.message.arbitration_id} not found")
         return {name: self.invoke_deserializer(name) for name in datapoint_names}
-    
+
     def invoke_deserializer(self, __name: str) -> Any:
         if __name in canMessages[self.message.arbitration_id]:
             try:
@@ -188,7 +194,7 @@ class MessageData:
     resolution_per_bit=0.1,
     data_range=(0, 30000)
 )
-def rpm(data: bytes) -> UINT: # data is an unsigned int 
+def rpm(data: bytes) -> UINT:  # data is an unsigned int
     return int.from_bytes(data, byteorder='big', signed=False)
 
 
@@ -201,10 +207,11 @@ def rpm(data: bytes) -> UINT: # data is an unsigned int
     name='TPS',
     units='%',
     resolution_per_bit=0.1,
-    data_range=(0,100),
+    data_range=(0, 100),
 )
 def tps(data: bytes) -> int:
     return int.from_bytes(data, byteorder='big', signed=True)
+
 
 @MessageData.deserializer(
     can_id=0xCFFF048,
@@ -219,6 +226,7 @@ def tps(data: bytes) -> int:
 )
 def fuel_open_time(data: bytes) -> int:
     return int.from_bytes(data, byteorder='big', signed=True)
+
 
 @MessageData.deserializer(
     can_id=0xCFFF048,
@@ -235,6 +243,8 @@ def ignition_angle(data: bytes) -> int:
     return int.from_bytes(data, byteorder='big', signed=True)
 
 # CAN ID GROUP: 0xCFFF148
+
+
 @MessageData.deserializer(
     can_id=0xCFFF148,
     pname='PE2',
@@ -264,6 +274,7 @@ def barometer(data: bytes) -> int:
 def map_data(data: bytes) -> int:
     return int.from_bytes(data, byteorder='big', signed=True)
 
+
 @MessageData.deserializer(
     can_id=0xCFFF148,
     pname='PE2',
@@ -277,13 +288,14 @@ def map_data(data: bytes) -> int:
 )
 def lambda_data(data: bytes) -> int:
     return int.from_bytes(data, byteorder='big', signed=True)
-    
+
+
 @MessageData.deserializer(
     can_id=0xCFFF148,
     pname='PE2',
     rate=50,
     start_position=7,
-    length=1, # should be 1 bit
+    length=1,  # should be 1 bit
     name='Pressure Type',
     units='enum',
     resolution_per_bit=0.01,
