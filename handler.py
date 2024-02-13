@@ -5,6 +5,7 @@ from wifi_client.wifi_client import Client as WifiClient
 
 import os
 from dotenv import load_dotenv
+import pandas as pd
 
 
 class Handler:
@@ -28,9 +29,7 @@ class Handler:
                 wifi_client.connect()
                 box_client.send_files()
                 discord_client.post_message("File uploaded to Box")
-                mongo_client.check_connection()
-                mongo_client.insert_documents()
-                mongo_client.close_connection()
+                Handler.mongo_upload_handler(mongo_client)
 
                 discord_client.post_message("Documents inserted into MongoDB")
             except Exception as e:
@@ -39,6 +38,16 @@ class Handler:
                 return
 
         return None
+
+    @staticmethod
+    def mongo_upload_handler(mongo_client):
+        mongo_client.check_connection()
+
+        ecu_df = pd.read_csv("data/ecu_data/ecu_data.csv")
+        ecu_dict = ecu_df.to_dict("records")
+
+        # mongo_client.insert_documents(ecu_dict)
+        mongo_client.close_connection()
 
 
 if __name__ == "__main__":
