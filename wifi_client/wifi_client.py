@@ -1,9 +1,11 @@
-import wifi
 from wifi import Cell, Scheme
 import traceback
+import logging
 
 # home network will be the network you want to connect to
 # password is the password for that network
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 class Client:
@@ -14,26 +16,31 @@ class Client:
 
     def get_wifi_networks(self) -> list:
         try:
+            logging.info("Getting wifi networks")
             return Cell.all(self.device_id)
-        except:
-            traceback.print_exc()
+        except Exception as e:
+            logging.error(f"Error discovering wifi networks: {e}")
+            traceback.print_exc(e)
             return []
 
     def connect(self) -> bool:
 
         try:
+            logging.info("Attempting to connect to wifi")
             networks = self.get_wifi_networks()
 
             for network in networks:
                 if network.ssid == self.home_network:
-                    scheme = wifi.Scheme.for_cell(self.device_id, network.ssid, network, self.password)
+                    scheme = Scheme.for_cell(self.device_id, network.ssid, network, self.password)
                     scheme.save()
                     scheme.activate()
 
                     print(f"Connected to wifi: {network.ssid}")
+                    logging.info(f"Connected to wifi: {network.ssid}")
                     return True
-        except:
-            traceback.print_exc()
+        except Exception as e:
+            logging.error(f"Error connecting to wifi: {e}")
+            traceback.print_exc(e)
             return False
 
 

@@ -25,7 +25,7 @@ class Client:
 
         except Exception as e:
             print(f"An error occurred: {e}")
-            logging.error(f"An error occurred while trying to connect to MongoDB: {e}")
+            logging.exception(f"An error occurred while trying to connect to MongoDB: {e}")
             traceback.print_exc()
             return False
 
@@ -38,7 +38,7 @@ class Client:
 
         except Exception as e:
             print(f"An error occurred: {e}")
-            logging.error(f"An error occurred while trying to close the MongoDB connection: {e}")
+            logging.exception(f"An error occurred while trying to close the MongoDB connection: {e}")
             traceback.print_exc()
             return False
 
@@ -54,7 +54,7 @@ class Client:
 
         except Exception as e:
             print(f"An error occurred: {e}")
-            logging.error(f"An error occurred while trying to insert documents: {e}")
+            logging.exception(f"An error occurred while trying to insert documents: {e}")
             traceback.print_exc()
             return False
 

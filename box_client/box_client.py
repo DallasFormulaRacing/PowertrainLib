@@ -6,6 +6,9 @@ import os
 import secrets
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from cryptography.hazmat.backends import default_backend
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 TOKEN_URL = "https://api.box.com/oauth2/token"
 UPLOAD_URL = "https://upload.box.com/api/2.0/files/content"
@@ -62,6 +65,7 @@ class Client:
         }
 
         try:
+            logging.info("Retrieving box access token")
             response = requests.post(TOKEN_URL, data=params)
 
             if response.status_code == 200:
@@ -71,8 +75,10 @@ class Client:
                 return access_token
 
         except requests.exceptions.RequestException as error:
+            logging.exception(f'Request Token Exception: {error}')
             print(f'Request Exception: {error}')
         else:
+            logging.error(f"Error: {response.status_code}")
             print(f"Error: {response.status_code}")
             print(response.text)
             return None
@@ -95,17 +101,21 @@ class Client:
             # print(json.dumps({'parent': {'id': '217403389478'}}))
 
             try:
+                logging.info("Attempting uploading file to Box")
                 response = requests.post(
                     UPLOAD_URL, headers=headers, files=files)
 
                 if response.status_code == 201:
+                    logging.info("File uploaded to Box")
                     return True
                 else:
+                    logging.error(f"Error uploading file: {response.status_code}")
                     print(f"Error: {response.status_code}")
                     print(response.json())
                     return False
 
             except requests.exceptions.RequestException as error:
+                logging.exception(f'Request Exception: {error}')
                 print(f'Request Exception: {error}')
                 return False
 

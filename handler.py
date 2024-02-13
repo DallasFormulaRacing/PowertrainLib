@@ -3,6 +3,7 @@ from discord_client.discord_client import Client as DiscordClient
 from mongo_client.mongo_client import Client as MongoClient
 from wifi_client.wifi_client import Client as WifiClient
 
+import logging
 import os
 from dotenv import load_dotenv
 import pandas as pd
@@ -16,6 +17,9 @@ class Handler:
         WIFI_PASSWORD = os.getenv('WIFI_PASSWORD')
         WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK')
 
+        if not WIFI_PASSWORD or not WEBHOOK_URL:
+            logging.error("WIFI_PASSWORD or DISCORD_WEBHOOK is not set")
+
         wifi_client = WifiClient('device_id', 'home_network', WIFI_PASSWORD)
         discord_client = DiscordClient(WEBHOOK_URL)
         box_client = BoxClient()
@@ -23,7 +27,10 @@ class Handler:
 
         wifi_networks = wifi_client.get_wifi_networks()
 
+        logging.info("Attempting to connect to wifi")
+
         if 'NETGEAR76' in wifi_networks:
+            logging.info("NETGEAR76 found in wifi networks")
 
             try:
                 wifi_client.connect()
@@ -32,11 +39,14 @@ class Handler:
                 Handler.mongo_upload_handler(mongo_client)
 
                 discord_client.post_message("Documents inserted into MongoDB")
+                logging.info("Documents inserted into MongoDB")
             except Exception as e:
+                logging.exception(f"An error occurred: {e}")
                 print.traceback(e)
                 discord_client.post_message(f"An error occurred: {e}")
                 return
 
+        logging.error("Wifi network not found in wifi networks")
         return None
 
     @staticmethod
