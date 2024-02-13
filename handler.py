@@ -14,15 +14,17 @@ class Handler:
         load_dotenv()
         WIFI_PASSWORD = os.getenv('WIFI_PASSWORD')
         WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK')
+        DEVICE_ID = os.getenv('DEVICE_ID')
+        NETWORK_NAME = os.getenv('NETWORK_NAME')
 
-        wifi_client = WifiClient('device_id', 'home_network', WIFI_PASSWORD)
+        wifi_client = WifiClient(DEVICE_ID, NETWORK_NAME, WIFI_PASSWORD)
         discord_client = DiscordClient(WEBHOOK_URL)
         box_client = BoxClient()
         mongo_client = MongoClient('cluster0', 'dfr_sensor_data')
 
         wifi_networks = wifi_client.get_wifi_networks()
 
-        if 'NETGEAR76' in wifi_networks:
+        if NETWORK_NAME in wifi_networks:
 
             try:
                 wifi_client.connect()
