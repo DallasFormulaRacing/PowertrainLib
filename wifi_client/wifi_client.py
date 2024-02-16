@@ -8,7 +8,7 @@ This script removes all saved networks to ensure that the specific
 network passed is chosen when restarting the wifi adapter
 
 We could try testing if appending to the wpa_supplicant.conf file
-works so saved wifi networks can remain
+works so other saved wifi networks can remain
 '''
 
 
@@ -29,7 +29,7 @@ class Client:
             traceback.print_exc(err.returncode)
             return []
 
-    def connect_to_network(self):
+    def find_network(self) -> bool:
         found = False
 
         for network_ssid in self.scan_for_networks():
@@ -39,7 +39,10 @@ class Client:
                 found = True
                 break
 
-        if found:
+        return found
+
+    def connect_to_network(self) -> bool:
+        if self.find_network():
             try:
                 network = subprocess.check_output(['wpa_passphrase', self.network_name, self.network_password], stderr=subprocess.STDOUT)
                 with open("/etc/wpa_supplicant/wpa_supplicant.conf", "w+") as fp:
@@ -47,14 +50,14 @@ class Client:
                     fp.write(network.decode("utf8"))
 
                 subprocess.check_output(["wpa_cli", "-i", "wlan0", "reconfigure"])
+                return True
 
             except subprocess.CalledProcessError as err:
-                found = False
                 traceback.print_exc(err.returncode)
+                return False
         else:
             print("Could not find network")
-
-        return found
+            return False
 
 
 def main():
