@@ -6,6 +6,22 @@ from wifi_client.wifi_client import Client as WifiClient
 import os
 from dotenv import load_dotenv
 
+'''
+TODO: wifi code has been rewritten, needs updating here
+
+TODO: only upload new files, not all files
+        - mark files that have been uploaded
+            (append "_dash_uploaded" or something similar to the end of the uploaded files)
+        - Whenever handler is called again after testing days, ignore files that have already renamed
+        
+TODO: add more descriptive discord webhook message(s)
+        - files that are uploaded
+        - size of individual files
+        - size of all files uploaded
+        
+TODO: Need to pass a list of file paths to upload into mongo/box
+
+'''
 
 class Handler:
 
