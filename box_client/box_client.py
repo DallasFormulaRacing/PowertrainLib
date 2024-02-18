@@ -6,29 +6,29 @@ import os
 import secrets
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from cryptography.hazmat.backends import default_backend
+import traceback
 
-TOKEN_URL = "https://api.box.com/oauth2/token"
-UPLOAD_URL = "https://upload.box.com/api/2.0/files/content"
-USER_INFO_URL = "https://api.box.com/2.0/users/me"
-
-config = json.load(
-    open('512311_xk3jq6ao_config.json'))
-
-key_id = config['boxAppSettings']['appAuth']['publicKeyID']
+TOKEN_URL = os.getenv("TOKEN_URL")
+UPLOAD_URL = os.getenv("UPLOAD_URL")
+USER_INFO_URL = os.getenv("USER_INFO_URL")
 
 
 class Client:
 
-    def __init__(self, client_id: str, client_secret: str, file_path: str, folder_id: int):
-        self.client_id = config['boxAppSettings']['clientID']
-        self.client_secret = config['boxAppSettings']['clientSecret']
+    def __init__(self, client_id: str, client_secret: str, enterprise_id: str, key_id: str, private_key: str, password: str, file_path: str, folder_id: int):
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.enterprise_id = enterprise_id
+        self.key_id = key_id
+        self.private_key = private_key
+        self.password = password
         self.file_path = file_path
         self.folder_id = folder_id
 
     def retrieve_access_token(self) -> str:
-        appAuth = config['boxAppSettings']['appAuth']
-        private_key = appAuth['privateKey']
-        password = appAuth['passphrase']
+        key_id = self.key_id
+        private_key = self.private_key
+        password = self.password
 
         key = load_pem_private_key(
             data=private_key.encode('utf8'),
@@ -37,8 +37,8 @@ class Client:
         )
 
         claims = {
-            'iss': config['boxAppSettings']['clientID'],
-            'sub': config['enterpriseID'],
+            'iss': self.client_id,
+            'sub': self.enterprise_id,
             'box_sub_type': 'enterprise',
             'aud': TOKEN_URL,
             'jti': secrets.token_hex(64),
@@ -79,6 +79,7 @@ class Client:
 
     def send_files(self) -> bool:
         access_token = self.retrieve_access_token()
+
         file_name = os.path.basename(self.file_path)
 
         headers = {
@@ -89,14 +90,11 @@ class Client:
 
             files = {
                 'file': (file_name, file_to_upload),
-                'attributes': (None, json.dumps({'parent': {'id': '217403389478'}})),
+                'attributes': (None, json.dumps({'parent': {'id': str(self.folder_id)}, 'name': file_name}), 'application/json'),
             }
 
-            # print(json.dumps({'parent': {'id': '217403389478'}}))
-
             try:
-                response = requests.post(
-                    UPLOAD_URL, headers=headers, files=files)
+                response = requests.post(UPLOAD_URL, headers=headers, files=files)
 
                 if response.status_code == 201:
                     return True

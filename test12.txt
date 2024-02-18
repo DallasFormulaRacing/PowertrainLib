@@ -1,0 +1,2 @@
+'{"type":"error","status":400,"code":"bad_request","context_info":{"errors":
+[{"reason":"missing_parameter","name":"file_data","message":"\'file_data\' is required"}]},"help_url":"http:\\/\\/developers.box.com\\/docs\\/#errors","message":"Bad Request","request_id":"tsnp8whmxjd6gk1a"}'

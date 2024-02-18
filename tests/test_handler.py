@@ -3,8 +3,8 @@ def test_access_token(box_client):
     assert isinstance(request, str)
 
 
-def test_send_file(box_client):
-    request = box_client.send_file()
+def test_send_files(box_client):
+    request = box_client.send_files()
     assert request is True
 
 
