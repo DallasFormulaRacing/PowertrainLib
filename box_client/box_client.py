@@ -141,6 +141,6 @@ class Client:
                 list_of_files.append("C:\\Users\\sajip\\OneDrive\\Desktop\\" + file)
                 print(file)
 
-            return True
+            return list_of_files
 
-        return False
+        return None
