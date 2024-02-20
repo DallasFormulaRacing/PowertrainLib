@@ -15,14 +15,14 @@ USER_INFO_URL = os.getenv("USER_INFO_URL")
 
 class Client:
 
-    def __init__(self, client_id: str, client_secret: str, enterprise_id: str, key_id: str, private_key: str, password: str, file_path: str, folder_id: int):
+    def __init__(self, client_id: str, client_secret: str, enterprise_id: str, key_id: str, private_key: str, password: str, folder_path: str, folder_id: int):
         self.client_id = client_id
         self.client_secret = client_secret
         self.enterprise_id = enterprise_id
         self.key_id = key_id
         self.private_key = private_key
         self.password = password
-        self.file_path = file_path
+        self.folder_path = folder_path
         self.folder_id = folder_id
 
     def retrieve_access_token(self) -> str:
@@ -77,35 +77,39 @@ class Client:
             print(response.text)
             return None
 
-    def send_files(self) -> bool:
+    def send_files(self, filenames: list) -> bool:
         access_token = self.retrieve_access_token()
 
-        file_name = os.path.basename(self.file_path)
+        for filename in filenames:
 
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-        }
+            file_name = os.path.basename(filename)
 
-        with open(self.file_path, 'rb') as file_to_upload:
-
-            files = {
-                'file': (file_name, file_to_upload),
-                'attributes': (None, json.dumps({'parent': {'id': str(self.folder_id)}, 'name': file_name}), 'application/json'),
+            headers = {
+                "Authorization": f"Bearer {access_token}",
             }
 
-            try:
-                response = requests.post(UPLOAD_URL, headers=headers, files=files)
+            with open(filename, 'rb') as file_to_upload:
 
-                if response.status_code == 201:
-                    return True
-                else:
-                    print(f"Error: {response.status_code}")
-                    print(response.json())
+                files = {
+                    'file': (filename, file_to_upload),
+                    'attributes': (None, json.dumps({'parent': {'id': str(self.folder_id)}, 'name': file_name}), 'application/json'),
+                }
+
+                try:
+                    response = requests.post(UPLOAD_URL, headers=headers, files=files)
+
+                    if response.status_code == 201:
+                        continue
+                    else:
+                        print(f"Error: {response.status_code}")
+                        print(response.json())
+                        return False
+
+                except requests.exceptions.RequestException as error:
+                    print(f'Request Exception: {error}')
                     return False
 
-            except requests.exceptions.RequestException as error:
-                print(f'Request Exception: {error}')
-                return False
+        return True
 
     def get_user_info(self):
 
@@ -125,3 +129,18 @@ class Client:
         except requests.exceptions.RequestException as error:
             print(f'Request Exception: {error}')
             return False
+
+    def discover_files(self) -> list:
+
+        list_of_files = []
+
+        if os.path.exists(self.folder_path) and os.path.isdir(self.folder_path):
+            files = os.listdir(self.folder_path)
+
+            for file in files:
+                list_of_files.append("C:\\Users\\sajip\\OneDrive\\Desktop\\" + file)
+                print(file)
+
+            return True
+
+        return False

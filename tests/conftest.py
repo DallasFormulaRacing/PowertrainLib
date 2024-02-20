@@ -20,7 +20,7 @@ def box_client():
         key_id=config['boxAppSettings']['appAuth']['publicKeyID'],
         private_key=config['boxAppSettings']['appAuth']['privateKey'],
         password=config['boxAppSettings']['appAuth']['passphrase'],
-        file_path=config['file_path'],
+        folder_path=config['folder_path'],
         folder_id=config['folder_id']
     )
 
