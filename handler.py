@@ -34,16 +34,15 @@ class Handler:
     def handler():
 
         load_dotenv()
+        NETWORK_NAME = os.getenv('NETWORK_NAME')
         WIFI_PASSWORD = os.getenv('NETWORK_PASSWORD')
         WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK')
-        NETWORK_NAME = os.getenv('NETWORK_NAME')
 
         wifi_client = WifiClient(NETWORK_NAME, WIFI_PASSWORD)
         discord_client = DiscordClient(WEBHOOK_URL)
         box_client = BoxClient(config['boxAppSettings']['clientID'], config['boxAppSettings']['clientSecret'], config['enterpriseID'], config['appAuth']['publicKeyID'],
                                config['appAuth']['privateKey'], config['boxAppSettings']['appAuth']['passphrase'], config['file_path'], config['folder_id'])
         mongo_client = MongoClient('cluster0', 'dfr_sensor_data')
-
 
         if wifi_client.connect_to_network():
 
