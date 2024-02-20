@@ -49,6 +49,7 @@ class Client:
                     fp.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=US\n")
                     fp.write(network.decode("utf8"))
 
+                subprocess.check_output(["sudo", "ifconfig", "eth0", "down"])
                 subprocess.check_output(["wpa_cli", "-i", "wlan0", "reconfigure"])
                 return True
 
