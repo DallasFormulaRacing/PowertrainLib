@@ -1,0 +1,15 @@
+[flake8]
+
+max-line-length = 140
+
+# Exclude certain file patterns from checking
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+
+# E301 expected 1 blank line, found 0
+# E302 expected 2 blank lines, found 0
+# You can enforce 2 blank lines before a function definition
+extend-ignore = E301

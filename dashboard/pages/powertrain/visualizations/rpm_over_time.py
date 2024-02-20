@@ -12,10 +12,25 @@ PAGE = "powertrain"
 VIZ_ID = "rpm-over-time"
 
 gc_rpm_over_time = dcc.Loading(
+    [
+        dbc.CardBody(
+            [
+                html.H3(
+                    "RPM vs Time (sec)",
+                    className="card-title",
+                    style={"textAlign": "center"},
+                ),
+                dcc.Loading(
                     dcc.Graph(id=f"{PAGE}-{VIZ_ID}"),
-                )
+                ),
+            ]
+        ),
+    ],
+)
 
 # callback for commits over time graph
+
+
 @callback(
     Output(f"{PAGE}-{VIZ_ID}", "figure"),
     Input("time-range", "data")
@@ -23,7 +38,6 @@ gc_rpm_over_time = dcc.Loading(
 def rpm_over_time_graph(_time_range):
     df = pd.read_csv('./ecu_data.csv', header="infer")
 
-    
     fig = px.line(
         df,
         x="Time (sec)",

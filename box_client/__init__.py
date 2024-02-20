@@ -1,0 +1,2 @@
+CLIENT_ID = "vey8wix8oegezspv1gn2bs2z296x7yng"
+CLIENT_SECERET = "DYEUtq3zcG7l6OTIv0OeBhpN4tZgmP1K"

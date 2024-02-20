@@ -1,9 +1,8 @@
 import dash
-from dash import html, dcc
+import dash_mantine_components as dbc
 
-dash.register_page(__name__, path="/suspension", name="Suspension")
+dash.register_page(__name__, path="/suspension", name="Suspension", exact=True)
 
-
-layout = html.Div([
-    "Hello World - TODO"
+layout = dbc.Container([
+    dbc.Header("Suspension", height=0, className="text-4xl text-center")
 ])

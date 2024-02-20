@@ -9,16 +9,16 @@ from pages.utils.graph_utils import color_seq
 import plotly.express as px
 
 PAGE = "powertrain"
-VIZ_ID = "rpm-map-lambda"
+VIZ_ID = "tps-over-time"
 
-gc_rpm_map_lambda = dbc.Card(
+gc_tps_over_time = dbc.Card(
     [
         dbc.CardBody(
             [
                 html.H3(
-                    "RPM vs MAP vs Lambda/AFR LTF (%)",
+                    "TPS vs Time (sec)",
                     className="card-title",
-                    style={"textAlign": "center", "marginTop": "1%"},
+                    style={"textAlign": "center"},
                 ),
                 dcc.Loading(
                     dcc.Graph(id=f"{PAGE}-{VIZ_ID}"),
@@ -34,8 +34,13 @@ gc_rpm_map_lambda = dbc.Card(
     Output(f"{PAGE}-{VIZ_ID}", "figure"),
     Input("time-range", "data")
 )
-def rpm_lambda_graph(_time_range):
+def tps_over_time_graph(_time_range):
     df = pd.read_csv('./ecu_data.csv', header="infer")
 
-    fig = px.line_3d(df, x='RPM', y='MAP (psi)', z='Lambda/AFR LTF (%)')
+    fig = px.line(
+        df,
+        x="Time (sec)",
+        y="TPS (%)",
+        labels={"value": "TPS", "timestamp": "Time"}
+    )
     return fig
