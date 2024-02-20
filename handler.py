@@ -5,6 +5,28 @@ from wifi_client.wifi_client import Client as WifiClient
 
 import os
 from dotenv import load_dotenv
+import json
+
+'''
+TODO: wifi code has been rewritten, needs updating here
+
+TODO: only upload new files, not all files
+        - mark files that have been uploaded
+            (append "_dash_uploaded" or something similar to the end of the uploaded files)
+        - Whenever handler is called again after testing days, ignore files that have already renamed
+        
+TODO: add more descriptive discord webhook message(s)
+        - files that are uploaded
+        - size of individual files
+        - size of all files uploaded
+        
+TODO: Need to pass a list of file paths to upload into mongo/box
+
+'''
+
+config = json.load(
+    open('512311_xk3jq6ao_config.json')
+    )
 
 
 class Handler:
@@ -12,22 +34,19 @@ class Handler:
     def handler():
 
         load_dotenv()
-        WIFI_PASSWORD = os.getenv('WIFI_PASSWORD')
-        WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK')
-        DEVICE_ID = os.getenv('DEVICE_ID')
         NETWORK_NAME = os.getenv('NETWORK_NAME')
+        WIFI_PASSWORD = os.getenv('NETWORK_PASSWORD')
+        WEBHOOK_URL = os.getenv('DISCORD_WEBHOOK')
 
-        wifi_client = WifiClient(DEVICE_ID, NETWORK_NAME, WIFI_PASSWORD)
+        wifi_client = WifiClient(NETWORK_NAME, WIFI_PASSWORD)
         discord_client = DiscordClient(WEBHOOK_URL)
-        box_client = BoxClient()
+        box_client = BoxClient(config['boxAppSettings']['clientID'], config['boxAppSettings']['clientSecret'], config['enterpriseID'], config['appAuth']['publicKeyID'],
+                               config['appAuth']['privateKey'], config['boxAppSettings']['appAuth']['passphrase'], config['file_path'], config['folder_id'])
         mongo_client = MongoClient('cluster0', 'dfr_sensor_data')
 
-        wifi_networks = wifi_client.get_wifi_networks()
-
-        if NETWORK_NAME in wifi_networks:
+        if wifi_client.connect_to_network():
 
             try:
-                wifi_client.connect()
                 box_client.send_files()
                 discord_client.post_message("File uploaded to Box")
                 mongo_client.check_connection()

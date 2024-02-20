@@ -1,63 +1,72 @@
-import wifi
-from wifi import Cell, Scheme
-import traceback
 import os
+import subprocess
+import re
+import traceback
 
-# home network will be the network you want to connect to
-# password is the password for that network
+'''
+This script removes all saved networks to ensure that the specific
+network passed is chosen when restarting the wifi adapter
+
+We could try testing if appending to the wpa_supplicant.conf file
+works so other saved wifi networks can remain
+'''
 
 
 class Client:
-    def __init__(self, device_id: str, home_network: str, password: str):
-        self.device_id = device_id
-        self.home_network = home_network
-        self.password = password
+    def __init__(self, network_name: str, network_password: str):
+        self.network_name = network_name
+        self.network_password = network_password
 
-    def get_wifi_networks(self) -> list:
+    def scan_for_networks(self) -> list:
         try:
-            return Cell.all("d8:3a:dd:19:9f:a4")
-        except:
-            traceback.print_exc()
+            devices = subprocess.check_output(['sudo', 'iwlist', 'wlan0', 'scan'])
+            network_names = devices.decode('utf-8')
+            network_names = re.findall(r'ESSID:"(.*?)"', devices)
+
+            return network_names
+
+        except subprocess.CalledProcessError as err:
+            traceback.print_exc(err.returncode)
             return []
 
-    def connect(self) -> bool:
+    def find_network(self) -> bool:
+        found = False
 
-        connected = False
-
-        networks = self.get_wifi_networks()
-
-        for network in networks:
-            print(network)
-
-        for network in networks:
-            print(network.ssid)
-            if network.ssid == self.home_network:
+        for network_ssid in self.scan_for_networks():
+            print(self.network_name, network_ssid)
+            if network_ssid == self.network_name:
                 print("Found home network")
-                scheme = wifi.Scheme.for_cell(self.device_id, network.ssid, network, self.password)
+                found = True
+                break
 
-                try:
-                    scheme.save()
-                    scheme.activate()
+        return found
 
-                    print(f"Connected to wifi: {network.ssid}")
-                    connected = True
+    def connect_to_network(self) -> bool:
+        if self.find_network():
+            try:
+                network = subprocess.check_output(['wpa_passphrase', self.network_name, self.network_password], stderr=subprocess.STDOUT)
+                with open("/etc/wpa_supplicant/wpa_supplicant.conf", "w+") as fp:
+                    fp.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\nupdate_config=1\ncountry=US\n")
+                    fp.write(network.decode("utf8"))
 
-                except wifi.exceptions.ConnectionError as err:
-                    traceback.print_exc(err)
-                    connected = False
+                subprocess.check_output(["wpa_cli", "-i", "wlan0", "reconfigure"])
+                return True
 
-        return connected
+            except subprocess.CalledProcessError as err:
+                traceback.print_exc(err.returncode)
+                return False
+        else:
+            print("Could not find network")
+            return False
 
 
 def main():
-    device_id = os.getenv("DEVICE_ID")
-    home_network = os.getenv("NETWORK_SSID")
-    password = os.getenv("NETWORK_PASSWORD")
-    client = Client(device_id, home_network, password)
+    name = os.getenv('NETWORK_NAME')
+    password = os.getenv('NETWORK_PASSWORD')
 
-    # client.get_wifi_networks()
-    print(client.connect())
+    client = Client(name, password)
+    print(client.connect_to_network())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
