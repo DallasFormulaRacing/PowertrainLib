@@ -1,8 +1,8 @@
 # Git Reference Sheet
-Quick 15 minute tutorial:
-https://www.youtube.com/watch?v=USjZcfj8yxE&pp=ygUMaW50cm8gdG8gZ2l0
+Quick 15 minute [tutorial](https://www.youtube.com/watch?v=USjZcfj8yxE&pp=ygUMaW50cm8gdG8gZ2l0):
+[![tutorial](https://img.youtube.com/vi/USjZcfj8yxE/0.jpg)](https://www.youtube.com/watch?v=USjZcfj8yxE&pp=ygUMaW50cm8gdG8gZ2l0)
 
-Generally a quick google search will answer any other questions you may have about git.
+> **Generally a quick google search will answer any other questions you may have about git.**
 
 ## Setup
 1. Install git
