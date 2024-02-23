@@ -6,7 +6,6 @@ import os
 import secrets
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from cryptography.hazmat.backends import default_backend
-import traceback
 
 TOKEN_URL = os.getenv("TOKEN_URL")
 UPLOAD_URL = os.getenv("UPLOAD_URL")
