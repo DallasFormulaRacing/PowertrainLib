@@ -1,8 +1,8 @@
-from box_client.box_client import Client as BoxClient
-from discord_client.discord_client import Client as DiscordClient
-from discord_client.messages import Messages as discord_messages
-from mongo_client.mongo_client import Client as MongoClient
-from wifi_client.wifi_client import Client as WifiClient
+from data_uploader.box_client.box_client import Client as BoxClient
+from data_uploader.discord_client.discord_client import Client as DiscordClient
+from data_uploader.discord_client.messages import Messages as discord_messages
+from data_uploader.mongo_client.mongo_client import Client as MongoClient
+from data_uploader.wifi_client.wifi_client import Client as WifiClient
 
 
 import os
