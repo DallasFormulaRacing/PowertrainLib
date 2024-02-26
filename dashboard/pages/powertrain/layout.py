@@ -6,6 +6,7 @@ import dash_mantine_components as dmc
 from .visualizations.rpm_over_time import gc_rpm_over_time
 from .visualizations.rpm_map_lambda import gc_rpm_map_lambda
 from .visualizations.tps_over_time import gc_tps_over_time
+from .visualizations.customizable_ecu_data import gc_customizable_graph
 
 dash.register_page(__name__, path="/powertrain", name="Powertrain")
 
@@ -32,8 +33,14 @@ layout = dbc.Container(
         dbc.Row(
             [
                 dbc.Col(gc_rpm_map_lambda, width=12),  # takes up the full row
-            ]
+            ],
+            className="mb-4",
         ),
+        dbc.Row(
+            [
+                dbc.Col(gc_customizable_graph, width=12),
+            ]
+        )
     ],
     fluid=True,
     style={
