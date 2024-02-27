@@ -15,19 +15,17 @@ class Client:
         self.client = MongoClient(connection_string, server_api=ServerApi('1'))
         self.db = self.client[db_name]
         self.collection = self.db[collection_name]
-        logging.info("MongoDB has been connection established.")
 
     def check_connection(self) -> bool:
 
         try:
             self.client.admin.command('ping')
-            print("Pinged your deployment. You successfully connected to MongoDB!")
             logging.info("MongoDB has been connection established.")
             return True
 
         except Exception as e:
             print(f"An error occurred: {e}")
-            logging.error(f"An error occurred while trying to connect to MongoDB: {e}")
+            logging.exception(f"An error occurred while trying to connect to MongoDB: {e}")
             traceback.print_exc()
             return False
 
@@ -36,12 +34,11 @@ class Client:
         try:
             self.client.close()
             logging.info("MongoDB connection closed.")
-            print("MongoDB connection closed.")
             return True
 
         except Exception as e:
             print(f"An error occurred: {e}")
-            logging.error(f"An error occurred while trying to close the MongoDB connection: {e}")
+            logging.exception(f"An error occurred while trying to close the MongoDB connection: {e}")
             traceback.print_exc()
             return False
 
@@ -51,14 +48,13 @@ class Client:
             if isinstance(data, list):
                 inserted_ids = self.collection.insert_many(data).inserted_ids
                 logging.info(f"Documents inserted, IDs: {inserted_ids}")
-                print(f"Documents inserted, IDs: {inserted_ids}")
                 return True
 
             raise ValueError("Data should be a list of dictionaries")
 
         except Exception as e:
             print(f"An error occurred: {e}")
-            logging.error(f"An error occurred while trying to insert documents: {e}")
+            logging.exception(f"An error occurred while trying to insert documents: {e}")
             traceback.print_exc()
             return False
 
