@@ -5,7 +5,6 @@ from dash import callback
 from dash.dependencies import Input, Output
 import pandas as pd
 
-from pages.utils.graph_utils import color_seq
 import plotly.express as px
 
 PAGE = "powertrain"
@@ -36,5 +35,5 @@ gc_rpm_map_lambda = dbc.Card(
 def rpm_lambda_graph(_time_range):
     df = pd.read_csv('./ecu_data.csv', header="infer")
 
-    fig = px.line_3d(df, x='RPM', y='MAP (psi)', z='Lambda/AFR LTF (%)')
+    fig = px.scatter(df, x="Time (sec)", y="MAP (psi)", color="Measured AFR #1")
     return fig
