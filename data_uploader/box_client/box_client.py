@@ -10,6 +10,7 @@ from cryptography.hazmat.backends import default_backend
 TOKEN_URL = os.getenv("TOKEN_URL")
 UPLOAD_URL = os.getenv("UPLOAD_URL")
 USER_INFO_URL = os.getenv("USER_INFO_URL")
+ROOT_FILE_PATH = os.getenv("ROOT_FILE_PATH")
 
 
 class Client:
@@ -137,7 +138,7 @@ class Client:
             files = os.listdir(self.folder_path)
 
             for file in files:
-                list_of_files.append("C:\\Users\\sajip\\OneDrive\\Desktop\\" + file)
+                list_of_files.append(ROOT_FILE_PATH + file)
                 print(file)
 
             return list_of_files
