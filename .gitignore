@@ -1,4 +1,4 @@
-# don't upload data files *please*
+# No data files
 *.csv
 
 # Compiled Python files
@@ -29,3 +29,5 @@ build/
 Thumbs.db
 
 data/
+.ecu_data
+512311_xk3jq6ao_config.json

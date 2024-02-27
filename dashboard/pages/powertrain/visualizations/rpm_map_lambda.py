@@ -18,7 +18,7 @@ gc_rpm_map_lambda = dbc.Card(
                 html.H3(
                     "RPM vs MAP vs Lambda/AFR LTF (%)",
                     className="card-title",
-                    style={"textAlign": "center"},
+                    style={"textAlign": "center", "marginTop": "1%"},
                 ),
                 dcc.Loading(
                     dcc.Graph(id=f"{PAGE}-{VIZ_ID}"),
@@ -27,6 +27,7 @@ gc_rpm_map_lambda = dbc.Card(
         ),
     ],
 )
+
 
 # callback for commits over time graph
 @callback(
