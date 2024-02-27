@@ -58,8 +58,6 @@ canMessages = {
         "Fuel Comp-Coolant Temp",
     ],
     218103368: ["Fuel Comp-Barometer", "Fuel Comp-MAP"],
-    # 218099784: ['Ignition Comp-Air Temp', 'Ignition Comp-Coolant Temp', 'Ignition Comp-Barometer', 'Ignition Comp-MAP'],
-}
 
 
 class pressure_type(Enum):
@@ -80,7 +78,6 @@ class temp_type(Enum):
 
     def __str__(self):
         return self.name
-
 
 class MessageData:
     _DESERIALIZERS = []
@@ -284,6 +281,7 @@ def tps(data: bytes) -> int:
     return int.from_bytes(data, byteorder="little", signed=True)
 
 
+
 @MessageData.deserializer(
     can_id=0xCFFF048,
     pname="PE1",
@@ -297,6 +295,7 @@ def tps(data: bytes) -> int:
 )
 def fuel_open_time(data: bytes) -> int:
     return int.from_bytes(data, byteorder="little", signed=True)
+
 
 
 @MessageData.deserializer(
@@ -315,6 +314,8 @@ def ignition_angle(data: bytes) -> int:
 
 
 # CAN ID GROUP: 0xCFFF148
+
+
 @MessageData.deserializer(
     can_id=0xCFFF148,
     pname="PE2",
@@ -343,6 +344,7 @@ def barometer(data: bytes) -> int:
 )
 def map_data(data: bytes) -> int:
     return int.from_bytes(data, byteorder="little", signed=True)
+
 
 
 @MessageData.deserializer(

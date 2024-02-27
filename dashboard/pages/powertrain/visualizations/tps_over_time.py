@@ -9,14 +9,14 @@ from pages.utils.graph_utils import color_seq
 import plotly.express as px
 
 PAGE = "powertrain"
-VIZ_ID = "rpm-over-time"
+VIZ_ID = "tps-over-time"
 
-gc_rpm_over_time = dbc.Card(
+gc_tps_over_time = dbc.Card(
     [
         dbc.CardBody(
             [
                 html.H3(
-                    "RPM vs Time (sec)",
+                    "TPS vs Time (sec)",
                     className="card-title",
                     style={"textAlign": "center"},
                 ),
@@ -28,20 +28,19 @@ gc_rpm_over_time = dbc.Card(
     ],
 )
 
+
 # callback for commits over time graph
-
-
 @callback(
     Output(f"{PAGE}-{VIZ_ID}", "figure"),
     Input("time-range", "data")
 )
-def rpm_over_time_graph(_time_range):
+def tps_over_time_graph(_time_range):
     df = pd.read_csv('./ecu_data.csv', header="infer")
 
     fig = px.line(
         df,
         x="Time (sec)",
-        y="RPM",
-        labels={"value": "RPM", "timestamp": "Time"}
+        y="TPS (%)",
+        labels={"value": "TPS", "timestamp": "Time"}
     )
     return fig
