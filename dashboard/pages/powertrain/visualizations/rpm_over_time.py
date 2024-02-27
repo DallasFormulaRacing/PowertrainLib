@@ -11,7 +11,7 @@ import plotly.express as px
 PAGE = "powertrain"
 VIZ_ID = "rpm-over-time"
 
-gc_rpm_over_time = dcc.Loading(
+gc_rpm_over_time = dbc.Card(
     [
         dbc.CardBody(
             [
