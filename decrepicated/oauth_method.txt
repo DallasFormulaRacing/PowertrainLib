@@ -1,0 +1,17 @@
+    # def retrieve_access_token(self) -> str:
+
+    #     body = {
+    #         'grant_type': self.grant_type,
+    #         'client_id': self.client_id,
+    #         'client_secret': self.client_secret
+    #     }
+
+    #     try:
+    #         response = requests.post(TOKEN_URL, data=body)
+
+    #         access_token = response.json().get("access_token")
+    #         print(f"Token Recieved: {access_token}")
+    #         return access_token
+
+    #     except requests.exceptions.RequestException as error:
+    #         return {'status': 'failure', 'error': str(error)}
