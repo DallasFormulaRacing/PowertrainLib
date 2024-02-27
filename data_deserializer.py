@@ -2,39 +2,82 @@ from enum import Enum
 from typing import Any, Tuple
 from can import Message
 from functools import wraps
+from decimal import Decimal
 
 UINT = int
 CHAR = str
 
 canMessages = {
-    218099784: ['RPM', 'TPS', 'Fuel Open Time', 'Ignition Angle'],
-    218100040: ['Barometer', 'MAP', 'Lambda', 'Pressure Type'],
-    218100296: ['Analog Input #1', 'Analog Input #2', 'Analog Input #3', 'Analog Input #4'],
-    218100552: ['Analog Input #5', 'Analog Input #6', 'Analog Input #7', 'Analog Input #8'],
-    218100808: ['Frequency 1', 'Frequency 2', 'Frequency 3', 'Frequency 4'],
-    218101064: ['Battery Volt', 'Air Temp', 'Coolant Temp', 'Temp Type'],
-    218101320: ['Analog Input #5', 'Analog Input #7'],
-    218101576: ['RPM Rate', 'TPS Rate', 'MAP Rate', 'MAF Load Rate'],
-    218101832: ['Lambda #1 Measured', 'Lambda #2 Measured', 'Target Lambda'],
-    218102088: [
-        'PWM Duty Cycle #1', 'PWM Duty Cycle #2', 'PWM Duty Cycle #2',
-        'PWM Duty Cycle #3', 'PWM Duty Cycle #4', 'PWM Duty Cycle #5',
-        'PWM Duty Cycle #6', 'PWM Duty Cycle #7', 'PWM Duty Cycle #8'
+    218099784: ["RPM", "TPS", "Fuel Open Time", "Ignition Angle"],
+    218100040: ["Barometer", "MAP", "Lambda", "Pressure Type"],
+    218100296: [
+        "Analog Input #1",
+        "Analog Input #2",
+        "Analog Input #3",
+        "Analog Input #4",
     ],
-    218102344: ['Percent Slip', 'Driven Wheel Rate of Change', 'Desired Value'],
-    218102600: ['Driven AVG Wheel Speed', 'Non-Driven AVG Wheel Speed', 'Ignition Compensation', 'Ignitiion Cut Percentage'],
-    218102856: ['Driven Wheel Speed #1', 'Driven Wheel Speed #2', 'Non-Driven Wheel Speed #1', 'Non-Driven Wheel Speed #2'],
-    218103112: ['Fuel Comp-Accel', 'Fuel Comp-Starting', 'Fuel Comp-Air Temp', 'Fuel Comp-Coolant Temp'],
-    218103368: ['Fuel Comp-Barometer', 'Fuel Comp-MAP'],
-    # 218099784: ['Ignition Comp-Air Temp', 'Ignition Comp-Coolant Temp', 'Ignition Comp-Barometer', 'Ignition Comp-MAP'],
-}
+    218100552: [
+        "Analog Input #5",
+        "Analog Input #6",
+        "Analog Input #7",
+        "Analog Input #8",
+    ],
+    218100808: ["Frequency 1", "Frequency 2", "Frequency 3", "Frequency 4"],
+    218101064: ["Battery Volt", "Air Temp", "Coolant Temp", "Temp Type"],
+    218101320: ["Analog Input #5", "Analog Input #7"],
+    218101576: ["RPM Rate", "TPS Rate", "MAP Rate", "MAF Load Rate"],
+    218101832: ["Lambda #1 Measured", "Lambda #2 Measured", "Target Lambda"],
+    218102088: [
+        "PWM Duty Cycle #1",
+        "PWM Duty Cycle #2",
+        "PWM Duty Cycle #2",
+        "PWM Duty Cycle #3",
+        "PWM Duty Cycle #4",
+        "PWM Duty Cycle #5",
+        "PWM Duty Cycle #6",
+        "PWM Duty Cycle #7",
+        "PWM Duty Cycle #8",
+    ],
+    218102344: ["Percent Slip", "Driven Wheel Rate of Change", "Desired Value"],
+    218102600: [
+        "Driven AVG Wheel Speed",
+        "Non-Driven AVG Wheel Speed",
+        "Ignition Compensation",
+        "Ignitiion Cut Percentage",
+    ],
+    218102856: [
+        "Driven Wheel Speed #1",
+        "Driven Wheel Speed #2",
+        "Non-Driven Wheel Speed #1",
+        "Non-Driven Wheel Speed #2",
+    ],
+    218103112: [
+        "Fuel Comp-Accel",
+        "Fuel Comp-Starting",
+        "Fuel Comp-Air Temp",
+        "Fuel Comp-Coolant Temp",
+    ],
+    218103368: ["Fuel Comp-Barometer", "Fuel Comp-MAP"],
 
 
 class pressure_type(Enum):
     """The pressure unit type."""
+
     KPA = 0
     PSI = 1
 
+    def __str__(self):
+        return self.name
+
+
+class temp_type(Enum):
+    """The temperature unit type."""
+
+    C = 0
+    F = 1
+
+    def __str__(self):
+        return self.name
 
 class MessageData:
     _DESERIALIZERS = []
@@ -56,7 +99,7 @@ class MessageData:
         """Get the deserializer for the given name."""
 
         for deserializer in self.deserializers:
-            if deserializer['name'] == name:
+            if deserializer["name"] == name:
                 return deserializer
         print("Can't find deserializer", name)
         raise ValueError(f"Deserializer for {name} not found")
@@ -69,9 +112,9 @@ class MessageData:
         start_position: int,
         length: int,
         name: str,
-        units: str,
-        resolution_per_bit: float,
-        data_range: Tuple[int]
+        data_range: Tuple[int],
+        units: str = None,
+        resolution_per_bit: float = None,
     ):
         """Decorator for deserializing CAN messages.
 
@@ -112,20 +155,44 @@ class MessageData:
 
                 # check if function accepts a data object
                 if "data" in annotations:
-                    kwargs["data"] = messsage.data[obj['start_position'] - 1: obj['start_position'] + obj['length'] - 1]
+                    kwargs["data"] = messsage.data[
+                        obj["start_position"]
+                        - 1 : obj["start_position"]
+                        + obj["length"]
+                        - 1
+                    ]
 
                 data = func(*args, **kwargs)
 
+                if resolution := obj.get("resolution_per_bit"):
+                    # decimal safe multiplication (no 0.1 + 0.2)
+
+                    d_data = Decimal(data)
+                    d_res = d_data * Decimal(resolution)
+                    if int(d_res) == float(d_res):
+                        data = int(d_res)
+                    else:
+                        data = float(d_res)
+
+                    data = round(data, 2) if isinstance(data, float) else data
+
                 # checking dtype
-                if not isinstance(data, dtype):
-                    raise TypeError(f"Deserializer {func.__name__} must return {dtype.__name__}")
+                # if not isinstance(data, dtype):
+                #     raise TypeError(f"Deserializer {func.__name__} must return {dtype.__name__}")
 
                 # checking if it matches the range
                 if isinstance(data, (int, float)):
-                    if not obj['data_range'][0] <= data <= obj['data_range'][1]:
-                        raise ValueError(f"Data {data} is out of range {obj['data_range']}")
+                    if not obj["data_range"][0] <= data <= obj["data_range"][1]:
+                        ...
+                        # raise ValueError(
+                        #     f"Data {data} is out of range {obj['data_range']} while processing metric {obj['name']}"
+                        # )
+                        print(
+                            f"Data {data} is out of range {obj['data_range']} while processing metric {obj['name']}"
+                        )
 
                 return data
+
             obj = dict(
                 can_id=can_id,
                 pname=pname,
@@ -137,9 +204,8 @@ class MessageData:
                 resolution_per_bit=resolution_per_bit,
                 data_range=data_range,
                 dtype=dtype,
-                func=wrapper
+                func=wrapper,
             )
-            print("adding object: ", obj)
             MessageData._DESERIALIZERS.append(obj)  # pylint: disable=protected-access
             return wrapper
 
@@ -167,8 +233,9 @@ class MessageData:
             except ValueError:
                 pass
             else:
-                return deserializer['func'](self)
+                return deserializer["func"](self)
         return None
+
 
 # CAN Bus Detail*
 # • 250 kbps Rate
@@ -183,123 +250,376 @@ class MessageData:
 
 # CAN ID GROUP: 0xCFFF048
 
+
 @MessageData.deserializer(
     can_id=0xCFFF048,
-    pname='PE1',
+    pname="PE1",
     rate=50,
     start_position=1,
     length=2,
-    name='RPM',
-    units='rpm',
-    resolution_per_bit=0.1,
-    data_range=(0, 30000)
+    name="RPM",
+    units="rpm",
+    resolution_per_bit=1,
+    data_range=(0, 30000),
 )
 def rpm(data: bytes) -> UINT:  # data is an unsigned int
-    return int.from_bytes(data, byteorder='big', signed=False)
+    return int.from_bytes(data, byteorder="little", signed=False)
 
 
 @MessageData.deserializer(
     can_id=0xCFFF048,
-    pname='PE1',
+    pname="PE1",
     rate=50,
     start_position=3,
     length=2,
-    name='TPS',
-    units='%',
+    name="TPS",
+    units="%",
     resolution_per_bit=0.1,
     data_range=(0, 100),
 )
 def tps(data: bytes) -> int:
-    return int.from_bytes(data, byteorder='big', signed=True)
+    return int.from_bytes(data, byteorder="little", signed=True)
+
 
 
 @MessageData.deserializer(
     can_id=0xCFFF048,
-    pname='PE1',
+    pname="PE1",
     rate=50,
     start_position=5,
     length=2,
-    name='Fuel Open Time',
-    units='ms',
-    resolution_per_bit=0.1,
+    name="Fuel Open Time",
+    units="ms",
+    resolution_per_bit=0.01,  # CHANGED FROM PE3
     data_range=(0, 30),
 )
 def fuel_open_time(data: bytes) -> int:
-    return int.from_bytes(data, byteorder='big', signed=True)
+    return int.from_bytes(data, byteorder="little", signed=True)
+
 
 
 @MessageData.deserializer(
     can_id=0xCFFF048,
-    pname='PE1',
+    pname="PE1",
     rate=50,
     start_position=7,
     length=2,
     name="Ignition Angle",
-    units='deg',
+    units="deg",
     resolution_per_bit=0.1,
     data_range=(-20, 100),
 )
 def ignition_angle(data: bytes) -> int:
-    return int.from_bytes(data, byteorder='big', signed=True)
+    return int.from_bytes(data, byteorder="little", signed=True)
+
 
 # CAN ID GROUP: 0xCFFF148
 
 
 @MessageData.deserializer(
     can_id=0xCFFF148,
-    pname='PE2',
+    pname="PE2",
     rate=50,
     start_position=1,
     length=2,
-    name='Barometer',
-    units='kPa',
+    name="Barometer",
+    units="kPa",
     resolution_per_bit=0.01,
     data_range=(0, 300),
 )
 def barometer(data: bytes) -> int:
-    return int.from_bytes(data, byteorder='big', signed=True)
+    return int.from_bytes(data, byteorder="little", signed=True)
 
 
 @MessageData.deserializer(
     can_id=0xCFFF148,
-    pname='PE2',
+    pname="PE2",
     rate=50,
     start_position=3,
     length=2,
-    name='MAP',
-    units='kPa',
+    name="MAP",
+    units="kPa",
     resolution_per_bit=0.01,
     data_range=(0, 300),
 )
 def map_data(data: bytes) -> int:
-    return int.from_bytes(data, byteorder='big', signed=True)
+    return int.from_bytes(data, byteorder="little", signed=True)
+
 
 
 @MessageData.deserializer(
     can_id=0xCFFF148,
-    pname='PE2',
+    pname="PE2",
     rate=50,
     start_position=5,
     length=2,
-    name='Lambda',
-    units='lambda',
-    resolution_per_bit=0.01,
+    name="Lambda",
+    units="lambda",
+    resolution_per_bit=0.001,  # CHANGED FROM PE3
     data_range=(0, 10),
 )
 def lambda_data(data: bytes) -> int:
-    return int.from_bytes(data, byteorder='big', signed=True)
+    return int.from_bytes(data, byteorder="little", signed=True)
 
 
 @MessageData.deserializer(
     can_id=0xCFFF148,
-    pname='PE2',
+    pname="PE2",
     rate=50,
     start_position=7,
     length=1,  # should be 1 bit
-    name='Pressure Type',
-    units='enum',
-    resolution_per_bit=0.01,
+    name="Pressure Type",
     data_range=(0, 255),
 )
 def pressure_type_data(data: bytes) -> pressure_type:
-    return pressure_type(int.from_bytes(data, byteorder='big', signed=False))
+    return pressure_type(int.from_bytes(data, byteorder="little", signed=False))
+
+
+# CAN ID GROUP: 0xCFFF248
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF248,
+    pname="PE3",
+    rate=100,
+    start_position=1,
+    length=2,
+    name="Analog Input #1",
+    units="volts",
+    resolution_per_bit=0.001,
+    data_range=(0, 5),
+)
+def analog_input_1(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF248,
+    pname="PE3",
+    rate=100,
+    start_position=3,
+    length=2,
+    name="Analog Input #2",
+    units="volts",
+    resolution_per_bit=0.001,
+    data_range=(0, 5),
+)
+def analog_input_2(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF248,
+    pname="PE3",
+    rate=100,
+    start_position=5,
+    length=2,
+    name="Analog Input #3",
+    units="volts",
+    resolution_per_bit=0.001,
+    data_range=(0, 5),
+)
+def analog_input_3(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF248,
+    pname="PE3",
+    rate=100,
+    start_position=7,
+    length=2,
+    name="Analog Input #4",
+    units="volts",
+    resolution_per_bit=0.001,
+    data_range=(0, 5),
+)
+def analog_input_4(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+# CAN ID GROUP: 0xCFFF348
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF248,
+    pname="PE4",
+    rate=100,
+    start_position=1,
+    length=2,
+    name="Analog Input #5",
+    units="volts",
+    resolution_per_bit=0.001,
+    data_range=(0, 5),
+)
+def analog_input_5(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF248,
+    pname="PE4",
+    rate=100,
+    start_position=3,
+    length=2,
+    name="Analog Input #6",
+    units="volts",
+    resolution_per_bit=0.001,
+    data_range=(0, 5),
+)
+def analog_input_6(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF248,
+    pname="PE4",
+    rate=100,
+    start_position=5,
+    length=2,
+    name="Analog Input #7",
+    units="volts",
+    resolution_per_bit=0.001,
+    data_range=(0, 5),
+)
+def analog_input_7(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF248,
+    pname="PE4",
+    rate=100,
+    start_position=7,
+    length=2,
+    name="Analog Input #8",
+    units="volts",
+    resolution_per_bit=0.001,
+    data_range=(0, 5),
+)
+def analog_input_8(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+# CAN ID GROUP: 0xCFFF448
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF448,
+    pname="PE5",
+    rate=100,
+    start_position=1,
+    length=2,
+    name="Frequency 1",
+    units="Hz",
+    resolution_per_bit=0.2,
+    data_range=(0, 6000),
+)
+def frequency_1(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF448,
+    pname="PE5",
+    rate=100,
+    start_position=3,
+    length=2,
+    name="Frequency 2",
+    units="Hz",
+    resolution_per_bit=0.2,
+    data_range=(0, 6000),
+)
+def frequency_2(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF448,
+    pname="PE5",
+    rate=100,
+    start_position=5,
+    length=2,
+    name="Frequency 3",
+    units="Hz",
+    resolution_per_bit=0.2,
+    data_range=(0, 6000),
+)
+def frequency_3(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF448,
+    pname="PE5",
+    rate=100,
+    start_position=7,
+    length=2,
+    name="Frequency 4",
+    units="Hz",
+    resolution_per_bit=0.2,
+    data_range=(0, 6000),
+)
+def frequency_4(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+# CAN ID GROUP: 0xCFFF548
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF548,
+    pname="PE6",
+    rate=1000,
+    start_position=1,
+    length=2,
+    name="Battery Volt",
+    units="volts",
+    resolution_per_bit=0.01,
+    data_range=(0, 22),
+)
+def battery_volt(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF548,
+    pname="PE6",
+    rate=1000,
+    start_position=3,
+    length=2,
+    name="Air Temp",
+    units="C or F",
+    resolution_per_bit=0.1,
+    data_range=(-1000, 1000),
+)
+def air_temp(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF548,
+    pname="PE6",
+    rate=1000,
+    start_position=5,
+    length=2,
+    name="Coolant Temp",
+    units="C or F",
+    resolution_per_bit=0.1,
+    data_range=(-1000, 1000),
+)
+def coolant_temp(data: bytes) -> int:
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+
+@MessageData.deserializer(
+    can_id=0xCFFF548,
+    pname="PE6",
+    rate=1000,
+    start_position=7,
+    length=1,
+    name="Temp Type",
+    data_range=(0, 255),
+)
+def temp_type_fn(data: bytes) -> temp_type:
+    return temp_type(int.from_bytes(data, byteorder="little", signed=False))
