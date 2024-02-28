@@ -1,0 +1,11 @@
+.page-title {
+    padding: 2.75rem 28px;
+    text-align: left;
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: var(--white);
+    background-color: var(--black);
+    width: full;
+    border-bottom: 2px solid var(--light-grey);
+}

@@ -1,33 +1,59 @@
 from dash import html, dcc
 import dash
-import dash_bootstrap_components as dbc
+import dash_mantine_components as dmc
 from dash import callback
 from dash.dependencies import Input, Output
 import pandas as pd
+from dash_iconify import DashIconify
 
-from pages.utils.graph_utils import color_seq
 import plotly.express as px
 
 PAGE = "powertrain"
 VIZ_ID = "rpm-over-time"
 
-gc_rpm_over_time = dbc.Card(
-    [
-        dbc.CardBody(
+gc_rpm_over_time = dmc.Card(
+    id="rpm-over-time",
+    children=[
+        dmc.CardSection(
             [
-                html.H3(
-                    "RPM vs Time (sec)",
-                    className="card-title",
-                    style={"textAlign": "center"},
+                dmc.Group(
+                    children=[
+                        dmc.Text("RPM vs Time", weight=500),
+                        dmc.ActionIcon(
+                            DashIconify(icon="carbon:overflow-menu-horizontal"),
+                            color="gray",
+                            variant="transparent",
+                        ),
+                    ],
+                    position="apart",
                 ),
-                dcc.Loading(
-                    dcc.Graph(id=f"{PAGE}-{VIZ_ID}"),
+                dmc.Text(
+                    children=[
+                        "This graph shows the RPM of the engine over time. "
+                    ],
+                    mt="sm",
+                    color="dimmed",
+                    size="sm",
                 ),
-            ]
+            ],
+            inheritPadding=True,
+            py="xs",
+            withBorder=True,
+        ),
+        dmc.CardSection(
+            dcc.Loading(
+                dcc.Graph(id=f"{PAGE}-{VIZ_ID}"),
+            ),
         ),
     ],
+    withBorder=True,
+    shadow="sm",
+    radius="md",
+    p="xs",
+    m="xs",
+    bg="black",
+    style={"width": "100%"},
 )
-
 # callback for commits over time graph
 
 

@@ -1,0 +1,26 @@
+.nav {
+    background-color: #0a0a0a;
+    padding: 0 16px;
+    border-bottom: 2px solid var(--light-grey);
+    position: sticky;
+    width: 100vw;
+    z-index: 100;
+}
+
+.nav-link {
+    padding: 12px 8px;
+    margin: 4px 4px;
+    text-decoration: none;
+    display: block;
+    border-radius: 8px;
+    transition: 0.3s;
+    user-select: none;
+    
+    color: var(--grey);
+}
+
+.nav-link:hover {
+    text-decoration: none;
+    background-color: var(--light-grey);
+    color: var(--white);
+}

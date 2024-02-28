@@ -27,12 +27,29 @@ logging.basicConfig(
 import pages.index.components as index_components
 
 plt_io.templates.default = "plotly_dark"
+custom_template = plt_io.templates["plotly_dark"]
 
+custom_template.layout.colorway = [
+    "#e1382d",
+    "#ff9e00",
+    "#f0e100",
+    "#00e1ff",
+    "#00ff8e",
+    "#ff00f7",
+    "#ff0077",
+    "#ff00d2",
+    "#ff00a6",
+    "#ff0055",
+]
+# background color
+custom_template.layout.paper_bgcolor = "black"
+custom_template.layout.plot_bgcolor = "black"
 """CREATE APPLICATION"""
 app = dash.Dash(
     __name__,
     use_pages=True,
     suppress_callback_exceptions=True,
+    assets_folder="assets"
     # Tailwind CSS CDN Loading
     # external_scripts=[{"src": "https://cdn.tailwindcss.com"}],
 )
