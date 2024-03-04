@@ -1,0 +1,24 @@
+html {
+        
+    /* color variables */
+    --white: #EDEDED;
+    --dark-grey: #111111;
+    --grey: #A1A1A1;
+    --light-grey: #1f1f1f;
+    --black: #000000;
+    --red: #FF0000;
+
+    background-color: var(--dark-grey);
+    color: var(--white);
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+}
+
+.rounded {
+    border-radius: 5px;
+}

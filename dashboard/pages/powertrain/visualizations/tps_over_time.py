@@ -1,6 +1,6 @@
 from dash import html, dcc
 import dash
-import dash_bootstrap_components as dbc
+import dash_mantine_components as dmc
 from dash import callback
 from dash.dependencies import Input, Output
 import pandas as pd
@@ -11,9 +11,9 @@ import plotly.express as px
 PAGE = "powertrain"
 VIZ_ID = "tps-over-time"
 
-gc_tps_over_time = dbc.Card(
+gc_tps_over_time = dmc.Card(
     [
-        dbc.CardBody(
+        dmc.Group(
             [
                 html.H3(
                     "TPS vs Time (sec)",
