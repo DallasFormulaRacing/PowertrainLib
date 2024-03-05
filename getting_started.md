@@ -21,9 +21,9 @@ cd PowertrainLib
 python -m venv venv
 ```
 
-4. Activate the virtual environment
+4. Activate the virtual environment (Windows)
 ```bash
-source venv/Scripts/activate
+.\venv\Scripts\activate
 ```
 
 5. Install the required packages
