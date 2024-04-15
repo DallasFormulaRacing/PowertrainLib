@@ -35,8 +35,6 @@ wheel_load_over_time = dmc.Card(
     Output(f"{PAGE}-{VIZ_ID}", "figure"),
     Input("time-range", "data")
 )
-def wheel_load_over_accel_graph(_time_range):
+def wheel_load_over_time_graph(_time_range):
     clientInstance = client()
-    clientInstance.wheel_load_client()
-        
     return clientInstance.wheel_load_client()
