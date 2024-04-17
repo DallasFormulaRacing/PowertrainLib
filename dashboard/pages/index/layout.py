@@ -33,6 +33,8 @@ layout = dmc.MantineProvider(
         # components to store data from queries
         dcc.Store(id="time-range", storage_type="session", data=[]),
         dcc.Store(id="user-group-loading-signal", data="", storage_type="memory"),
+        dcc.Store(id='ecu-data', data=[]),
+        dcc.Store(id="ljm-data", data=[]),
         dcc.Location(id="url"),
         navbar,
         dmc.Text(
@@ -40,6 +42,7 @@ layout = dmc.MantineProvider(
             id="title",
             className="page-title",
         ),
+        # dcc.Input(id='testing-day', type='text', placeholder='Enter run ID'),
         dash.page_container
     ],
 )
