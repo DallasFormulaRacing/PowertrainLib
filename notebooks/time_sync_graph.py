@@ -2,7 +2,7 @@ import pandas as pd
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
-import plotly.graph_objs as go
+import plotly.express as px
 
 # SAMPLE TIME SYNC GRAPH
 
@@ -36,6 +36,7 @@ app.layout = html.Div([
     dcc.Store(id='x-axis-range')
 ])
 
+# callback to update x-axis range
 @app.callback(
     Output('x-axis-range', 'data'),
     [Input('graph1', 'relayoutData'),
@@ -57,8 +58,7 @@ def update_x_axis_range(relayoutData1, relayoutData2):
 )
 def update_graph1(selected_y_axis, x_range):
     title = f"{selected_y_axis} x Time (sec)"
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=df['Time (sec)'], y=df[selected_y_axis], mode='lines', name=selected_y_axis))
+    fig = px.line(df, x='Time (sec)', y=selected_y_axis)
     fig.update_layout(title=title, xaxis_title="Time (sec)", yaxis_title=selected_y_axis, xaxis=dict(range=x_range['x_range']))
     return fig
 
@@ -70,8 +70,7 @@ def update_graph1(selected_y_axis, x_range):
 )
 def update_graph2(selected_y_axis, x_range):
     title = f"{selected_y_axis} x Time (sec)"
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=df['Time (sec)'], y=df[selected_y_axis], mode='lines', name=selected_y_axis))
+    fig = px.line(df, x='Time (sec)', y=selected_y_axis)
     fig.update_layout(title=title, xaxis_title="Time (sec)", yaxis_title=selected_y_axis, xaxis=dict(range=x_range['x_range']))
     return fig
 
