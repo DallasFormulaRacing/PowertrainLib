@@ -2,3 +2,5 @@ dash==2.15.0
 dash-mantine-components==0.12.1
 pandas==2.2.1
 dash-iconify==0.1.2
+pymongo==4.6.2
+certifi
