@@ -59,5 +59,5 @@ gc_rpm_map_lambda = dmc.Card(
 def rpm_lambda_graph(_time_range):
     df = pd.read_csv('./ecu_data.csv', header="infer")
 
-    fig = px.scatter(df, x="Time (sec)", y="MAP (psi)", color="Measured AFR #1")
+    fig = px.scatter(df, x="timestamp", y="MAP", color="Lambda")
     return fig

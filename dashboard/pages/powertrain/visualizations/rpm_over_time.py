@@ -66,7 +66,7 @@ def rpm_over_time_graph(_time_range):
 
     fig = px.line(
         df,
-        x="Time (sec)",
+        x="timestamp",
         y="RPM",
         labels={"value": "RPM", "timestamp": "Time"}
     )
