@@ -17,7 +17,7 @@ pitch_roll_over_time = dmc.Card(
         dmc.Group(
             [
                 html.H3(
-                    "Pitch and Roll vs Time (g)",
+                    "Pitch and Roll vs Time (deg)",
                     className="card-title",
                     style={"textAlign": "center"},
                 ),
