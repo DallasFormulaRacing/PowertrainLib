@@ -10,14 +10,14 @@ import plotly.express as px
 import timeit
 
 PAGE = "SuspensionSteering"
-VIZ_ID = "wheel-load-over-time"
+VIZ_ID = "pitch-roll-over-time"
 
-wheel_load_over_time = dmc.Card(
+pitch_roll_over_time = dmc.Card(
     [
         dmc.Group(
             [
                 html.H3(
-                    "Wheel Load vs Time (lbf)",
+                    "Pitch and Roll vs Time (g)",
                     className="card-title",
                     style={"textAlign": "center"},
                 ),
@@ -35,6 +35,6 @@ wheel_load_over_time = dmc.Card(
     Output(f"{PAGE}-{VIZ_ID}", "figure"),
     Input("time-range", "data")
 )
-def wheel_load_over_time_graph(_time_range):
+def pitch_roll_over_time_graph(_time_range):
     clientInstance = client()
-    return clientInstance.wheel_load_client()
+    return clientInstance.pitch_roll_client()
