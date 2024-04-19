@@ -58,7 +58,7 @@ canMessages = {
         "Fuel Comp-Coolant Temp",
     ],
     218103368: ["Fuel Comp-Barometer", "Fuel Comp-MAP"],
-
+}
 
 class pressure_type(Enum):
     """The pressure unit type."""
