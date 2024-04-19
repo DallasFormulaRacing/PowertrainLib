@@ -1,11 +1,11 @@
 from io import StringIO
-from dash import html, dcc
+
 import dash
 import dash_mantine_components as dmc
-from dash import callback
-from dash.dependencies import Input, Output
 import pandas as pd
 import plotly.express as px
+from dash import callback, dcc, html
+from dash.dependencies import Input, Output
 from dash_iconify import DashIconify
 
 PAGE = "powertrain"
@@ -18,7 +18,7 @@ gc_tps_over_time = dmc.Card(
             [
                 dmc.Group(
                     children=[
-                        dmc.Text("TPS vs Time", weight=500),
+                        dmc.Text("Linpots vs Time", weight=500),
                         dmc.ActionIcon(
                             DashIconify(icon="carbon:overflow-menu-horizontal"),
                             color="gray",
@@ -29,7 +29,7 @@ gc_tps_over_time = dmc.Card(
                 ),
                 dmc.Text(
                     children=[
-                        "This graph shows the TPS of the engine over time. "
+                        "Data from the latest testing session"
                     ],
                     mt="sm",
                     color="dimmed",
@@ -59,10 +59,10 @@ gc_tps_over_time = dmc.Card(
 # callback for commits over time graph
 @callback(
     Output(f"{PAGE}-{VIZ_ID}", "figure"),
-    Input("ljm-data", "data")
+    Input("linpot-data", "data")
 )
 def tps_over_time_graph(data):
-    df = pd.read_json(data, orient='split', encoding='unicode_escape')
+    df = pd.read_json(data, orient='split')
     print("read df: ", df)
     if df.empty:
         return px.line(title="No Data", labels={"value": "TPS", "timestamp": "Time"})

@@ -24,7 +24,7 @@ def update_title(pathname) -> str:
     return "404 - Not Found"
 
 
-@callback(Output("ljm-data", "data"), Input("session-id", "data"))
+@callback(Output("linpot-data", "data"), Input("session-id", "data"))
 def load_data(session_id):
     db = get_db()
     collection = db["realtime_metrics"]

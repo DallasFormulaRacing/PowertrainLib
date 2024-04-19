@@ -34,7 +34,8 @@ layout = dmc.MantineProvider(
         dcc.Store(id="time-range", storage_type="session", data=[]),
         dcc.Store(id="user-group-loading-signal", data="", storage_type="memory"),
         dcc.Store(id='ecu-data', data=[]),
-        dcc.Store(id="ljm-data", data=[]),
+        dcc.Store(id="linpot-data", data=[]),
+        dcc.Store(id="xl-data", data=[]),
         dcc.Location(id="url"),
         navbar,
         dmc.Text(
