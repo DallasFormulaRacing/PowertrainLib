@@ -22,7 +22,7 @@ app.layout = html.Div([
     dcc.Dropdown(
         id="line-charts-x-dropdown",
         options=list(df.head()),
-        value=["Time (sec)"]
+        value=["timestamp"]
     )
 ])
 

@@ -16,7 +16,7 @@ gc_tps_over_time = dmc.Card(
         dmc.Group(
             [
                 html.H3(
-                    "TPS vs Time (sec)",
+                    "TPS vs timestamp",
                     className="card-title",
                     style={"textAlign": "center"},
                 ),
@@ -39,7 +39,7 @@ def tps_over_time_graph(_time_range):
 
     fig = px.line(
         df,
-        x="Time (sec)",
+        x="timestamp",
         y="TPS (%)",
         labels={"value": "TPS", "timestamp": "Time"}
     )

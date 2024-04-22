@@ -12,7 +12,7 @@ VIZ_ID = "customizable_graph"
 ID = f"{PAGE}-{VIZ_ID}"
 df = pd.read_csv('./ecu_data.csv', header="infer")
 
-y_axis_options = [{'label': col, 'value': col} for col in df.columns if col != "Time (sec)"]
+y_axis_options = [{'label': col, 'value': col} for col in df.columns if col != "timestamp"]
 
 gc_customizable_graph = dmc.Card(
     id="customizable-ecu-data",
@@ -72,11 +72,11 @@ gc_customizable_graph = dmc.Card(
      Input("y-axis-dropdown", "value")]
 )
 def customizable_graph(_time_range, y_axis_variable):
-    graph_title = f"{y_axis_variable} vs Time (sec)"
+    graph_title = f"{y_axis_variable} vs timestamp"
 
     fig = px.line(
         df,
-        x="Time (sec)",
+        x="timestamp",
         y=y_axis_variable,
         labels={"timestamp": "Time"}
     )

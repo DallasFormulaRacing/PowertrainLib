@@ -54,6 +54,9 @@ app = dash.Dash(
     # external_scripts=[{"src": "https://cdn.tailwindcss.com"}],
 )
 
+# Hack needed for gunicorn to detect server
+server = app.server
+
 """DASH PAGES LAYOUT"""
 # layout of the app stored in the app_layout file, must be imported after the app is initiated for setup
 from pages.index.layout import layout # pylint: disable=wrong-import-position

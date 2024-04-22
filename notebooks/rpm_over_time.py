@@ -21,12 +21,12 @@ analog_variables = ['Analog #1 (volts)', 'Analog #2 (volts)', 'Analog #3 (volts)
                     'Analog #7 (volts)', 'Analog #8 (volts)']
 
 # Create scatter plot with multiple variables, including analogs in hover_data
-fig = px.scatter(df, x='Time (sec)', y='RPM', color='MAP (psi)',
+fig = px.scatter(df, x='timestamp', y='RPM', color='MAP (psi)',
                  size='TPS (%)', hover_data=['Air Temp (F)', 'Coolant Temp (F)', 'Battery Volt (V)', 'Fuel Open Time (ms)'] + analog_variables)
 
 # Customize the plot layout
 fig.update_layout(title='Multiple Variables vs. Time for Track Run',
-                  xaxis_title='Time (sec)',
+                  xaxis_title='timestamp',
                   yaxis_title='RPM')
 
 # Show the plot
