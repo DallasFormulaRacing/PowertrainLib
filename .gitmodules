@@ -1,0 +1,3 @@
+[submodule "dashboard/pages/steeringsuspension/dashboard/pages/steeringsuspension/SuspensionSteeringLib"]
+	path = dashboard/pages/steeringsuspension/dashboard/pages/steeringsuspension/SuspensionSteeringLib
+	url = https://github.com/DallasFormulaRacing/SuspensionSteeringLib
