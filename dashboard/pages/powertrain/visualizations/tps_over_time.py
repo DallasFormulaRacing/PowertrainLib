@@ -35,7 +35,7 @@ gc_tps_over_time = dmc.Card(
     Input("time-range", "data")
 )
 def tps_over_time_graph(_time_range):
-    df = pd.read_csv('./ecu_data.csv', header="infer")
+    df = pd.DataFrame()
 
     fig = px.line(
         df,

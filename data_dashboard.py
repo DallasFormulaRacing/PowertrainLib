@@ -4,7 +4,7 @@ import plotly.express as px
 
 import pandas as pd
 
-df = pd.read_csv('./ecu_data.csv', header="infer")
+df = pd.DataFrame()
 
 print(df.head())
 app = Dash(__name__)

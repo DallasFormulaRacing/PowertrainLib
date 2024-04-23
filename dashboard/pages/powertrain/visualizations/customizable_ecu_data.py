@@ -10,7 +10,7 @@ PAGE = "powertrain"
 VIZ_ID = "customizable_graph"
 
 ID = f"{PAGE}-{VIZ_ID}"
-df = pd.read_csv('./ecu_data.csv', header="infer")
+df = pd.DataFrame()
 
 y_axis_options = [{'label': col, 'value': col} for col in df.columns if col != "timestamp"]
 
