@@ -3,7 +3,7 @@ RUN apt-get update
 RUN apt-get install nano
 
 RUN mkdir wd
-WORKDIR wd
+WORKDIR /wd
 COPY ./requirements.txt .
 RUN pip3 install -r requirements.txt
 RUN pip3 install gunicorn
