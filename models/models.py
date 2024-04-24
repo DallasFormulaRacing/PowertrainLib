@@ -1,28 +1,39 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class EngineData(BaseModel):
-    time: float = Field(..., description="The timestamp of the recording in seconds.")
-    rpm: int = Field(..., description="Engine speed in Revolutions Per Minute.")
-    airTempF: float = Field(..., description="Ambient air temperature in degrees Fahrenheit.")
-    coolantTempF: float = Field(..., description="Engine coolant temperature in degrees Fahrenheit.")
-    tps: float = Field(..., description="Throttle Position Sensor reading, indicating throttle opening in percentage.")
-    mapPsi: float = Field(..., description="Manifold Absolute Pressure reading in pounds per square inch.")
-    batteryVolt: float = Field(..., description="Battery voltage.")
-    fuelOpenTimeMs: float = Field(..., description="Duration for which the fuel injector remains open per cycle, in milliseconds.")
-    startingCompensationFuel: float = Field(..., description="Percentage of fuel compensation at starting.")
-    ignitionAngleDBTDC: float = Field(..., description="Ignition timing, in degrees before top dead center.")
-    wsFl: float = Field(..., description="Wheel speed front left.")
-    wsRl: float = Field(..., description="Wheel speed rear left.")
-    measuredAFR1: float = Field(..., description="Air-Fuel Ratio measured by oxygen sensors for bank 1.")
-    measuredAFR2: float = Field(..., description="Air-Fuel Ratio measured by oxygen sensors for bank 2.")
-    targetAFR: float = Field(..., description="The desired air-fuel ratio set by the engine control unit for optimal combustion.")
-    lambdaAFRLTF: float = Field(..., description="Long term fuel trim percentage based on lambda or AFR sensors.")
-    analog1Volts: float = Field(..., description="Reading from analog sensor 1, in volts.")
-    analog2Volts: float = Field(..., description="Reading from analog sensor 2, in volts.")
-    analog3Volts: float = Field(..., description="Reading from analog sensor 3, in volts.")
-    analog4Volts: float = Field(..., description="Reading from analog sensor 4, in volts.")
-    analog5Volts: float = Field(..., description="Reading from analog sensor 5, in volts.")
-    analog6Volts: float = Field(..., description="Reading from analog sensor 6, in volts.")
-    analog7Volts: float = Field(..., description="Reading from analog sensor 7, in volts.")
-    analog8Volts: float = Field(..., description="Reading from analog sensor 8, in volts.")
+    time: float
+    rpm: int
+    airTempF: float
+    coolantTempF: float
+    tps: float
+    mapPsi: float
+    batteryVolt: float
+    fuelOpenTimeMs: float
+    startingCompensationFuel: float
+    ignitionAngleDBTDC: float
+    wsFl: float
+    wsRl: float
+    measuredAFR1: float
+    measuredAFR2: float
+    targetAFR: float
+    lambdaAFRLTF: float
+    analog1Volts: float
+    analog2Volts: float
+    analog3Volts: float
+    analog4Volts: float
+    analog5Volts: float
+    analog6Volts: float
+    analog7Volts: float
+    analog8Volts: float
+
+
+class LabJackData(BaseModel):
+    time: float
+    front_left: float
+    front_right: float
+    rear_left: float
+    rear_right: float
+    x_accel: float
+    y_accel: float
+    z_accel: float

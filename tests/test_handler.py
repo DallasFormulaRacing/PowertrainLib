@@ -6,8 +6,8 @@ def test_access_token(box_client):
 def test_send_files(box_client):
 
     list_of_files = [
-        "C:\\Users\\sajip\\Documents\\GitHub\\PowertrainLib\\files\\ecu4.csv",
-        "C:\\Users\\sajip\\Documents\\GitHub\\PowertrainLib\\files\\ecu2.csv"
+        r"data\ecu4.csv",
+        r"data\ecu2.csv"
     ]
 
     request = box_client.send_files(list_of_files)

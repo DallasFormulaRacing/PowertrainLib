@@ -1,5 +1,5 @@
-from box_client.box_client import Client as Box_Client
-from mongo_client.mongo_client import Client as Mongo_Client
+from data_uploader.box_client.box_client import Client as Box_Client
+from data_uploader.mongo_client.mongo_client import Client as Mongo_Client
 import pytest
 import os
 import json
@@ -8,7 +8,7 @@ uri = f"mongodb+srv://noel:${os.getenv('MONGO_PASSWORD')}@cluster0.gw7z3sn.mongo
 
 config = json.load(
     open('512311_xk3jq6ao_config.json')
-    )
+)
 
 
 @pytest.fixture
