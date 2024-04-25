@@ -40,10 +40,10 @@ canMessages = {
     ],
     218102344: ["Percent Slip", "Driven Wheel Rate of Change", "Desired Value"],
     218102600: [
-        "Driven AVG Wheel Speed",
-        "Non-Driven AVG Wheel Speed",
+        "Driven Avg Wheel Speed",
+        "Non-Driven Avg Wheel Speed",
         "Ignition Compensation",
-        "Ignitiion Cut Percentage",
+        "Ignition Cut Percentage",
     ],
     218102856: [
         "Driven Wheel Speed #1",
@@ -59,6 +59,7 @@ canMessages = {
     ],
     218103368: ["Fuel Comp-Barometer", "Fuel Comp-MAP"],
 
+} # Wait, was there not supposed to be a bracket here??? - Gino
 
 class pressure_type(Enum):
     """The pressure unit type."""
@@ -250,6 +251,306 @@ class MessageData:
 
 # CAN ID GROUP: 0xCFFF048
 
+#////////////////above is original code-------------------------------------------------
+
+
+#--------------------------------------------------------------------------------------
+
+@MessageData.deserializer(
+    can_id=0xCFFF748,
+    pname="PE8",
+    rate=100,
+    start_position=1,
+    length=2,
+    name="RPM Rate",
+    units="rpm/sec",
+    resolution_per_bit=1,
+    data_range=(-10000, 10000),
+)
+def rpm(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFF748,
+    pname="PE8",
+    rate=100,
+    start_position=3,
+    length=2,
+    name="TPS Rate",
+    units="%/sec",
+    resolution_per_bit=1,
+    data_range=(-3000, 3000),
+)
+def tps(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFF748,
+    pname="PE8",
+    rate=100,
+    start_position=5,
+    length=2,
+    name="MAP Rate",
+    units="psi/sec",
+    resolution_per_bit=1,
+    data_range=(-300, 300),
+)
+def map_rate(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFFA48,
+    pname="PE11",
+    rate=100,
+    start_position=1,
+    length=2,
+    name="Percent Slip",
+    units="%",
+    resolution_per_bit=0.1,
+    data_range=(-3000, 3000),
+)
+def slip(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFFB48,
+    pname="PE12",
+    rate=100,
+    start_position=1,
+    length=2,
+    name="Driven Avg Wheel Speed",
+    units="ft/sec",
+    resolution_per_bit=0.1,
+    data_range=(0, 3000),
+)
+def driven_avg_wheel_speed(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=False)
+
+@MessageData.deserializer(
+    can_id=0xCFFFB48,
+    pname="PE12",
+    rate=100,
+    start_position=3,
+    length=2,
+    name="Non-Driven Avg Wheel Speed",
+    units="ft/sec",
+    resolution_per_bit=0.1,
+    data_range=(0, 3000),
+)
+def non_driven_avg_wheel_speed(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=False)
+
+@MessageData.deserializer(
+    can_id=0xCFFFB48,
+    pname="PE12",
+    rate=100,
+    start_position=5,
+    length=2,
+    name="Ignition Compensation",
+    units="deg",
+    resolution_per_bit=0.1,
+    data_range=(0, 100),
+)
+def ignition_comp(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFFB48,
+    pname="PE12",
+    rate=100,
+    start_position=7,
+    length=2,
+    name="Ignition Cut Percentage",
+    units="%",
+    resolution_per_bit=1,
+    data_range=(0, 100),
+)
+def ignition_cut(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFFC48,
+    pname="PE13",
+    rate=100,
+    start_position=1,
+    length=2,
+    name="Driven Wheel Speed #1",
+    units="ft/sec",
+    resolution_per_bit=0.1,
+    data_range=(0, 3000),
+)
+def wheel_speed_1(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=False)
+
+@MessageData.deserializer(
+    can_id=0xCFFFC48,
+    pname="PE13",
+    rate=100,
+    start_position=3,
+    length=2,
+    name="Driven Wheel Speed #2",
+    units="ft/sec",
+    resolution_per_bit=0.1,
+    data_range=(0, 3000),
+)
+def wheel_speed_2(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=False)
+
+@MessageData.deserializer(
+    can_id=0xCFFFC48,
+    pname="PE13",
+    rate=100,
+    start_position=5,
+    length=2,
+    name="Non-Driven Wheel Speed #1",
+    units="ft/sec",
+    resolution_per_bit=0.1,
+    data_range=(0, 3000),
+)
+def wheel_non_speed_1(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=False)
+
+@MessageData.deserializer(
+    can_id=0xCFFFC48,
+    pname="PE13",
+    rate=100,
+    start_position=7,
+    length=2,
+    name="Non-Driven Wheel Speed #2",
+    units="ft/sec",
+    resolution_per_bit=0.1,
+    data_range=(0, 3000),
+)
+def wheel_non_speed_2(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=False)
+
+@MessageData.deserializer(
+    can_id=0xCFFFD48,
+    pname="PE14",
+    rate=100,
+    start_position=1,
+    length=2,
+    name="Fuel Comp - Acceleration",
+    units="%",
+    resolution_per_bit=0.1,
+    data_range=(0, 500),
+)
+def fuel_comp_accel(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFFD48,
+    pname="PE14",
+    rate=100,
+    start_position=3,
+    length=2,
+    name="Fuel Comp - Starting",
+    units="%",
+    resolution_per_bit=0.1,
+    data_range=(0, 500),
+)
+def fuel_comp_starting(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFFD48,
+    pname="PE14",
+    rate=100,
+    start_position=5,
+    length=2,
+    name="Fuel Comp - Air Temp",
+    units="%",
+    resolution_per_bit=0.1,
+    data_range=(0, 500),
+)
+def fuel_comp_air_temp(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFFD48,
+    pname="PE14",
+    rate=100,
+    start_position=7,
+    length=2,
+    name="Fuel Comp - Coolant Temp",
+    units="%",
+    resolution_per_bit=0.1,
+    data_range=(0, 500),
+)
+def fuel_comp_coolant_temp(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFFE48,
+    pname="PE15",
+    rate=100,
+    start_position=3,
+    length=2,
+    name="Fuel Comp - MAP",
+    units="%",
+    resolution_per_bit=0.1,
+    data_range=(0, 500),
+)
+def fuel_comp_map(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFD048,
+    pname="PE16",
+    rate=100,
+    start_position=1,
+    length=2,
+    name="Ignition Comp - Air Temp",
+    units="deg",
+    resolution_per_bit=0.1,
+    data_range=(-20, 20),
+)
+def ignition_comp_air_temp(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFD048,
+    pname="PE16",
+    rate=100,
+    start_position=3,
+    length=2,
+    name="Ignition Comp - Coolant Temp",
+    units="deg",
+    resolution_per_bit=0.1,
+    data_range=(-20, 20),
+)
+def ignition_comp_coolant_temp(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFD048,
+    pname="PE16",
+    rate=100,
+    start_position=5,
+    length=2,
+    name="Ignition Comp - Barometer",
+    units="deg",
+    resolution_per_bit=0.1,
+    data_range=(-20, 20),
+)
+def ignition_comp_barometer(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+@MessageData.deserializer(
+    can_id=0xCFFD048,
+    pname="PE16",
+    rate=100,
+    start_position=7,
+    length=2,
+    name="Ignition Comp - MAP",
+    units="deg",
+    resolution_per_bit=0.1,
+    data_range=(-20, 20),
+)
+def ignition_comp_map(data: bytes) -> UINT:  # data is an unsigned int
+    return int.from_bytes(data, byteorder="little", signed=True)
+
+#////////////////////////////////////////////////////below is original code
 
 @MessageData.deserializer(
     can_id=0xCFFF048,
