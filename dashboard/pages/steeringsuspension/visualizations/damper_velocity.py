@@ -36,7 +36,7 @@ damper_velocity_over_time = dmc.Card(
     Input("time-range", "data")
 )
 def damper_velocity_over_time_graph(_time_range):
-    clientInstance = client()
-    clientInstance.damper_velocity_vs_time_client()
-        
-    return clientInstance.damper_velocity_vs_time_client()
+    client_instance = client()
+    client_instance.damper_velocity_vs_time_client()
+
+    return client_instance.damper_velocity_vs_time_client()

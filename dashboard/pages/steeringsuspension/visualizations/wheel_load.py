@@ -1,5 +1,4 @@
 from dash import html, dcc
-import dash
 import dash_mantine_components as dmc
 from dash import callback
 from dash.dependencies import Input, Output
