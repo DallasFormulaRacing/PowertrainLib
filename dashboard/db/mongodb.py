@@ -15,7 +15,7 @@ def get_db():
         mongo = g._database = MongoClient(os.getenv('MONGO_URI'), **kw)
         
         # test connection
-        mongo['cluster0'].list_collection_names()
+        print('mongo', mongo['cluster0'].list_collection_names())
     return mongo['cluster0']
 
 db = LocalProxy(get_db)
