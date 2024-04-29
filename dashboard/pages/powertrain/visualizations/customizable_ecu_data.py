@@ -5,14 +5,14 @@ from dash.dependencies import Input, Output
 import pandas as pd
 from dash_iconify import DashIconify
 import plotly.express as px
-
+# from db.mongodb import get_data
 PAGE = "powertrain"
 VIZ_ID = "customizable_graph"
 
 ID = f"{PAGE}-{VIZ_ID}"
 df = pd.read_csv('./ecu_data.csv', header="infer")
 
-y_axis_options = [{'label': col, 'value': col} for col in df.columns if col != "Time (sec)"]
+y_axis_options = [{'label': col, 'value': col} for col in df.columns if col != "timestamp"]
 
 gc_customizable_graph = dmc.Card(
     id="customizable-ecu-data",
@@ -46,7 +46,7 @@ gc_customizable_graph = dmc.Card(
             dmc.MultiSelect(
                     id="y-axis-dropdown",
                     data=y_axis_options,
-                    value="RPM",
+                    value=["RPM"],
                     style={"width": "50%"}
                 ),
             dcc.Loading(
@@ -68,15 +68,14 @@ gc_customizable_graph = dmc.Card(
 @callback(
     [Output("graph-title", "children"),
      Output(ID, "figure")],
-    [Input("time-range", "data"),
-     Input("y-axis-dropdown", "value")]
+    [Input("y-axis-dropdown", "value")]
 )
-def customizable_graph(_time_range, y_axis_variable):
-    graph_title = f"{y_axis_variable} vs Time (sec)"
+def customizable_graph(y_axis_variable):
+    graph_title = f"{', '.join(y_axis_variable)} vs Time (sec)"
 
     fig = px.line(
         df,
-        x="Time (sec)",
+        x="timestamp",
         y=y_axis_variable,
         labels={"timestamp": "Time"}
     )

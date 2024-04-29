@@ -1,6 +1,6 @@
 from typing import Dict
 import dash_mantine_components as dmc
-
+from filters.session_id import SessionIdFilter
 # format {graph_group: {graph_name: graph_component}}
 
 
@@ -12,6 +12,7 @@ def make_components(graphs: Dict[str, Dict[str, "dmc.Component"]]):
     """
 
     nav_children = [
+        SessionIdFilter(),
         dmc.NavLink(label="Overview", href="#", sx={"color": "var(--white)"}, mb="md", className="rounded"),
     ]
 

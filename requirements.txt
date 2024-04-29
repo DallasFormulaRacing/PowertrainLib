@@ -4,3 +4,5 @@ pandas==2.2.1
 dash_iconify==0.1.2
 scipy==1.13.0
 numpy==1.26.4
+pymongo==4.7.0
+python-dotenv==1.0.1

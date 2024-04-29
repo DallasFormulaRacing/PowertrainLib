@@ -18,6 +18,13 @@ import logging
 import dash
 import plotly.io as plt_io
 
+# Loading environment variables
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+    
 logging.basicConfig(
     format="%(asctime)s %(levelname)-8s %(message)s", level=logging.INFO
 )
@@ -66,4 +73,4 @@ if os.getenv("DASH_DEBUG", "False") == "True":
     app.enable_dev_tools(dev_tools_ui=True, dev_tools_hot_reload=False)
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=True, host="0.0.0.0")

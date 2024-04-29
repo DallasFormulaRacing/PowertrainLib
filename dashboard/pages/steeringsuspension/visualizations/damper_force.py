@@ -4,8 +4,7 @@ import dash_mantine_components as dmc
 from dash import callback
 from dash.dependencies import Input, Output
 import pandas as pd
-from ..SuspensionSteeringLib.client import client
-from pages.utils.graph_utils import color_seq
+from ..SuspensionSteeringLib2.client import client
 import plotly.express as px
 import timeit
 
@@ -33,10 +32,12 @@ damper_force_over_time = dmc.Card(
 # callback for commits over time graph
 @callback(
     Output(f"{PAGE}-{VIZ_ID}", "figure"),
-    Input("time-range", "data")
+    Input("linpot-data", "data")
 )
-def damper_force_over_time_graph(_time_range):
-    clientInstance = client()
-    clientInstance.damper_force_vs_time_client()
-        
+def damper_force_over_time_graph(data):
+    df = pd.read_json(data, orient='split')
+    print("read df: ", df)
+    if df.empty:
+        return px.line(title="No Data", labels={"value": "damper force", "timestamp": "Time"})
+    clientInstance = client(df)
     return clientInstance.damper_force_vs_time_client()
